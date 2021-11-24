@@ -8,20 +8,12 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "dist/sold_page_script.js"
-      ],
-      "matches": [
-        "https://jp.mercari.com/item/*"
-      ],
-      "css": [
-        "style.css"
-      ]
+      "js": ["dist/sold_page_script.js"],
+      "matches": ["https://jp.mercari.com/item/*"],
+      "css": ["style.css"]
     },
     {
-      "js": [
-        "dist/create_page_script.js"
-      ],
+      "js": ["dist/create_page_script.js"],
       "matches": [
         "https://www.base64-image.de/",
         "https://lab.syncer.jp/Tool/Base64-encode/"
@@ -31,13 +23,6 @@
   "action": {
     "default_title": "Click to show an alert"
   },
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "tabs",
-    "storage"
-  ],
-  "host_permissions": [
-    "https://github.com/"
-  ]
+  "permissions": ["activeTab", "scripting", "tabs", "storage"],
+  "host_permissions": ["https://jp.mercari.com/item/*"]
 }
