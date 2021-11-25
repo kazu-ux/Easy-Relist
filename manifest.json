@@ -14,10 +14,7 @@
     },
     {
       "js": ["dist/create_page_script.js"],
-      "matches": [
-        "https://www.base64-image.de/",
-        "https://lab.syncer.jp/Tool/Base64-encode/"
-      ]
+      "matches": ["https://jp.mercari.com/sell/create"]
     }
   ],
   "action": {

@@ -24,24 +24,28 @@ function getImageUrl() {
 }
 function getBase64(imageUrls) {
     return __awaiter(this, void 0, void 0, function* () {
-        const base64 = yield fetch(imageUrls[0])
-            .then((e) => e.blob())
-            .then((blob) => __awaiter(this, void 0, void 0, function* () {
-            const reader = new FileReader();
-            yield new Promise((resolve, reject) => {
-                reader.onload = resolve;
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-            return reader.result;
-        }));
-        return base64;
+        const imageBase64s = [];
+        for (const imageUrl of imageUrls) {
+            const base64 = yield fetch(imageUrls[0])
+                .then((e) => e.blob())
+                .then((blob) => __awaiter(this, void 0, void 0, function* () {
+                const reader = new FileReader();
+                yield new Promise((resolve, reject) => {
+                    reader.onload = resolve;
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+                return reader.result;
+            }));
+            imageBase64s.push(base64);
+        }
+        return imageBase64s;
     });
 }
 function setProduct() {
     return __awaiter(this, void 0, void 0, function* () {
         const product = {
-            images: [yield getBase64(getImageUrl())],
+            images: yield getBase64(getImageUrl()),
             title: document
                 .querySelector('[data-testid="name"]')
                 .shadowRoot.querySelector('.heading.page').textContent,

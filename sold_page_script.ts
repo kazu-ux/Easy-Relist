@@ -28,23 +28,27 @@ function getImageUrl(): string[] {
 }
 
 async function getBase64(imageUrls: string[]) {
-  const base64 = await fetch(imageUrls[0])
-    .then((e) => e.blob())
-    .then(async (blob) => {
-      const reader = new FileReader();
-      await new Promise((resolve, reject) => {
-        reader.onload = resolve;
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
+  const imageBase64s: string[] = [];
+  for (const imageUrl of imageUrls) {
+    const base64 = await fetch(imageUrls[0])
+      .then((e) => e.blob())
+      .then(async (blob) => {
+        const reader = new FileReader();
+        await new Promise((resolve, reject) => {
+          reader.onload = resolve;
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        return reader.result;
       });
-      return reader.result;
-    });
-  return base64 as string;
+    imageBase64s.push(base64 as string);
+  }
+  return imageBase64s;
 }
 
 async function setProduct() {
   const product: ProductInfo = {
-    images: [await getBase64(getImageUrl())]!,
+    images: await getBase64(getImageUrl())!,
     title: document
       .querySelector('[data-testid="name"]')!
       .shadowRoot!.querySelector('.heading.page')!.textContent!,
