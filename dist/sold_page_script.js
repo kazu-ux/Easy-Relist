@@ -12,31 +12,59 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 element.addEventListener('click', (e) => {
   chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', item);
 }) */
+function getImageUrl() {
+    let imageUrls = [];
+    const imageElements = document.querySelectorAll('.slick-list [sticker]');
+    for (const element of imageElements) {
+        const imageUrl = element.getAttribute('src');
+        imageUrls.push(imageUrl);
+    }
+    // await getBase64(imageUrls);
+    return imageUrls;
+}
+function getBase64(imageUrls) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const base64 = yield fetch(imageUrls[0])
+            .then((e) => e.blob())
+            .then((blob) => __awaiter(this, void 0, void 0, function* () {
+            const reader = new FileReader();
+            yield new Promise((resolve, reject) => {
+                reader.onload = resolve;
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+            return reader.result;
+        }));
+        return base64;
+    });
+}
 function setProduct() {
-    const product = {
-        images: [],
-        title: document
-            .querySelector('[data-testid="name"]')
-            .shadowRoot.querySelector('.heading.page').textContent,
-        price: Number(document.querySelector('[data-testid="price"]').getAttribute('value')),
-        shipping: document.querySelector('[title-label="商品の情報"]')
-            .nextElementSibling.children[2].lastChild.textContent,
-        text: document
-            .querySelector('[data-testid="description"]')
-            .shadowRoot.querySelector('slot')
-            .assignedNodes()[0].textContent,
-        category: document.querySelector('[title-label="商品の情報"]')
-            .nextElementSibling.children[0].lastChild.textContent,
-        condition: document.querySelector('[title-label="商品の情報"]')
-            .nextElementSibling.children[1].lastChild.textContent,
-        shippingMethod: document.querySelector('[title-label="商品の情報"]')
-            .nextElementSibling.children[3].lastChild.textContent,
-        region: document.querySelector('[title-label="商品の情報"]')
-            .nextElementSibling.children[4].lastChild.textContent,
-        days: document.querySelector('[title-label="商品の情報"]')
-            .nextElementSibling.children[5].lastChild.textContent,
-    };
-    return product;
+    return __awaiter(this, void 0, void 0, function* () {
+        const product = {
+            images: [yield getBase64(getImageUrl())],
+            title: document
+                .querySelector('[data-testid="name"]')
+                .shadowRoot.querySelector('.heading.page').textContent,
+            price: Number(document.querySelector('[data-testid="price"]').getAttribute('value')),
+            shipping: document.querySelector('[title-label="商品の情報"]')
+                .nextElementSibling.children[2].lastChild.textContent,
+            text: document
+                .querySelector('[data-testid="description"]')
+                .shadowRoot.querySelector('slot')
+                .assignedNodes()[0].textContent,
+            category: document.querySelector('[title-label="商品の情報"]')
+                .nextElementSibling.children[0].lastChild.textContent,
+            condition: document.querySelector('[title-label="商品の情報"]')
+                .nextElementSibling.children[1].lastChild.textContent,
+            shippingMethod: document.querySelector('[title-label="商品の情報"]')
+                .nextElementSibling.children[3].lastChild.textContent,
+            region: document.querySelector('[title-label="商品の情報"]')
+                .nextElementSibling.children[4].lastChild.textContent,
+            days: document.querySelector('[title-label="商品の情報"]')
+                .nextElementSibling.children[5].lastChild.textContent,
+        };
+        return product;
+    });
 }
 function createRelistButton(element) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -53,10 +81,10 @@ function createRelistButton(element) {
 function clickEvent() {
     return __awaiter(this, void 0, void 0, function* () {
         const relistButtonElement = document.querySelector('div.relist-button');
-        relistButtonElement.addEventListener('click', () => {
-            console.log('test');
-            console.log(setProduct());
-        });
+        relistButtonElement.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+            console.log(yield setProduct());
+            console.log(getImageUrl());
+        }));
     });
 }
 chrome.runtime.onMessage.addListener((value) => {

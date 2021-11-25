@@ -16,9 +16,35 @@ element.addEventListener('click', (e) => {
   chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', item);
 }) */
 
-function setProduct() {
+function getImageUrl(): string[] {
+  let imageUrls: string[] = [];
+  const imageElements = document.querySelectorAll('.slick-list [sticker]');
+  for (const element of imageElements) {
+    const imageUrl = element.getAttribute('src')!;
+    imageUrls.push(imageUrl);
+  }
+  // await getBase64(imageUrls);
+  return imageUrls;
+}
+
+async function getBase64(imageUrls: string[]) {
+  const base64 = await fetch(imageUrls[0])
+    .then((e) => e.blob())
+    .then(async (blob) => {
+      const reader = new FileReader();
+      await new Promise((resolve, reject) => {
+        reader.onload = resolve;
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      return reader.result;
+    });
+  return base64 as string;
+}
+
+async function setProduct() {
   const product: ProductInfo = {
-    images: [],
+    images: [await getBase64(getImageUrl())]!,
     title: document
       .querySelector('[data-testid="name"]')!
       .shadowRoot!.querySelector('.heading.page')!.textContent!,
@@ -60,9 +86,9 @@ async function createRelistButton(element: Element) {
 
 async function clickEvent() {
   const relistButtonElement = document.querySelector('div.relist-button');
-  relistButtonElement!.addEventListener('click', () => {
-    console.log('test');
-    console.log(setProduct());
+  relistButtonElement!.addEventListener('click', async () => {
+    console.log(await setProduct());
+    console.log(getImageUrl());
   });
 }
 
