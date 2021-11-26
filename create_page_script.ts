@@ -65,6 +65,29 @@ function setAllCategory(soldCategories: string[]) {
   });
 }
 
+function setCondition(condition: string) {
+  const targetElement: HTMLSelectElement = document.querySelector(
+    '[name="itemCondition"] select'
+  )!;
+  function getConditionList(): string[] {
+    let conditionList = [];
+
+    const conditionOptions = targetElement.options;
+    for (const options of conditionOptions) {
+      conditionList.push(options.text);
+    }
+    console.log(conditionList);
+    return conditionList;
+  }
+
+  function judgeWhatNumber(conditionList: string[], condition: string) {
+    return conditionList.findIndex((target) => target === condition);
+  }
+
+  targetElement.selectedIndex = judgeWhatNumber(getConditionList(), condition);
+  targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
 (function () {
   const interval = setInterval(async () => {
     const targetElement = document.querySelector(
@@ -73,7 +96,8 @@ function setAllCategory(soldCategories: string[]) {
     if (targetElement) {
       clearInterval(interval);
       // imageUpload(targetElement);
-      setAllCategory(['7', '96', '841']);
+      // setAllCategory(['7', '96', '841']);
+      setCondition('新品、未使用');
       console.log(targetElement);
     }
     console.log('繰り返し');
