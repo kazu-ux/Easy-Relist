@@ -42,6 +42,16 @@ function getBase64(imageUrls) {
         return imageBase64s;
     });
 }
+function getCategories() {
+    const categoryIds = [];
+    const targetElement = Array.from(document.querySelectorAll('[data-location="item:item_detail_table:link:go_search"]')).pop();
+    const tCategoryIds = targetElement.href.match(/t._category_id=[0-9]*/g);
+    for (const tCategoryId of tCategoryIds) {
+        categoryIds.push(tCategoryId.match(/[0-9]+$/)[0]);
+    }
+    console.log(categoryIds);
+    return categoryIds;
+}
 function setProduct() {
     return __awaiter(this, void 0, void 0, function* () {
         const product = {
@@ -56,8 +66,7 @@ function setProduct() {
                 .querySelector('[data-testid="description"]')
                 .shadowRoot.querySelector('slot')
                 .assignedNodes()[0].textContent,
-            category: document.querySelector('[title-label="商品の情報"]')
-                .nextElementSibling.children[0].lastChild.textContent,
+            category: getCategories(),
             condition: document.querySelector('[title-label="商品の情報"]')
                 .nextElementSibling.children[1].lastChild.textContent,
             shippingMethod: document.querySelector('[title-label="商品の情報"]')
@@ -94,20 +103,17 @@ function clickEvent() {
 chrome.runtime.onMessage.addListener((value) => {
     alert(value);
 });
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-            console.log('繰り返し');
-            const element = document.querySelector('[data-testid="checkout-button-container"]');
-            if (element) {
-                clearInterval(interval);
-                yield createRelistButton(element);
-                yield clickEvent();
-            }
-        }), 1000);
-    });
-}
-main();
+(function () {
+    const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+        console.log('繰り返し');
+        const element = document.querySelector('[data-testid="checkout-button-container"]');
+        if (element) {
+            clearInterval(interval);
+            yield createRelistButton(element);
+            yield clickEvent();
+        }
+    }), 1000);
+})();
 function _(_) {
     throw new Error('Function not implemented.');
 }

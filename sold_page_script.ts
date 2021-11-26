@@ -4,7 +4,7 @@ type ProductInfo = {
   price: number;
   shipping: string;
   text: string;
-  category: string;
+  category: string[];
   condition: string;
   shippingMethod: string;
   region: string;
@@ -46,6 +46,21 @@ async function getBase64(imageUrls: string[]) {
   return imageBase64s;
 }
 
+function getCategories() {
+  const categoryIds: string[] = [];
+  const targetElement = Array.from(
+    document.querySelectorAll(
+      '[data-location="item:item_detail_table:link:go_search"]'
+    )
+  ).pop()! as HTMLLinkElement;
+  const tCategoryIds = targetElement.href.match(/t._category_id=[0-9]*/g)!;
+  for (const tCategoryId of tCategoryIds) {
+    categoryIds.push(tCategoryId.match(/[0-9]+$/)![0]);
+  }
+  console.log(categoryIds);
+  return categoryIds;
+}
+
 async function setProduct() {
   const product: ProductInfo = {
     images: await getBase64(getImageUrl())!,
@@ -61,8 +76,7 @@ async function setProduct() {
       .querySelector('[data-testid="description"]')!
       .shadowRoot!.querySelector('slot')!
       .assignedNodes()[0].textContent!,
-    category: document.querySelector('[title-label="商品の情報"]')!
-      .nextElementSibling!.children[0]!.lastChild!.textContent!,
+    category: getCategories(),
     condition: document.querySelector('[title-label="商品の情報"]')!
       .nextElementSibling!.children[1].lastChild!.textContent!,
     shippingMethod: document.querySelector('[title-label="商品の情報"]')!
@@ -100,7 +114,7 @@ chrome.runtime.onMessage.addListener((value) => {
   alert(value);
 });
 
-async function main() {
+(function () {
   const interval = setInterval(async () => {
     console.log('繰り返し');
     const element = document.querySelector(
@@ -112,9 +126,8 @@ async function main() {
       await clickEvent();
     }
   }, 1000);
-}
+})();
 
-main();
 function _(_: any) {
   throw new Error('Function not implemented.');
 }
