@@ -8,11 +8,6 @@
   },
   "content_scripts": [
     {
-      "js": ["dist/sold_page_script.js"],
-      "matches": ["https://jp.mercari.com/item/*"],
-      "css": ["style.css"]
-    },
-    {
       "js": ["dist/create_page_script.js"],
       "matches": ["https://jp.mercari.com/sell/create"]
     }

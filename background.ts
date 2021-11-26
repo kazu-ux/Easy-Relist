@@ -13,6 +13,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         target: { tabId: tabId },
         files: ['dist/sold_page_script.js'],
       });
+      chrome.scripting.insertCSS({
+        target: { tabId: tabId },
+        files: ['style.css'],
+      });
       console.log(tab);
     }
   }
