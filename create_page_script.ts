@@ -18,6 +18,19 @@ const imageUpload = async (targetElement: HTMLInputElement) => {
   targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 };
 
+function getCategory1List() {
+  let category1List: string[] = [];
+  const targetElement: HTMLSelectElement = document.querySelector(
+    '[name="category1"] select'
+  )!;
+  const category1Options = targetElement.options;
+  for (const option of category1Options) {
+    category1List.push(option.value);
+  }
+
+  console.log(category1List);
+}
+
 const setCategory = (categories: string[]) => {
   const targetElement = document.querySelectorAll(
     'select'
@@ -35,7 +48,9 @@ const setCategory = (categories: string[]) => {
       clearInterval(interval);
       // imageUpload(targetElement);
       setCategory(categories);
+      getCategory1List();
       console.log(targetElement);
     }
+    console.log('繰り返し');
   }, 1000);
 })();
