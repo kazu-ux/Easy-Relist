@@ -23,76 +23,47 @@ const imageUpload = (targetElement) => __awaiter(void 0, void 0, void 0, functio
     targetElement.files = dataTransfer.files;
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 });
-function getCategory1List() {
-    let category1List = [];
-    const targetElement = document.querySelector('[name="category1"] select');
-    const category1Options = targetElement.options;
-    for (const option of category1Options) {
-        category1List.push(option.value);
+function setAllCategory(soldCategories) {
+    function getCategoryList(index) {
+        return new Promise((resolve, reject) => {
+            let categoryList = [];
+            const interval = setInterval(() => {
+                const targetElement = document.querySelector(`[name="category${index}"] select`);
+                if (targetElement) {
+                    clearInterval(interval);
+                    const categoryOptions = targetElement.options;
+                    for (const option of categoryOptions) {
+                        categoryList.push(option.value);
+                    }
+                    console.log({ categoryLIst: categoryList });
+                    resolve(categoryList);
+                }
+                console.log(`getCategory${index}List 繰り返し`);
+            }, 1000);
+        });
     }
-    console.log({ category1: category1List });
-    return category1List;
+    function judgeWhatNumber(categoryList, categoryId) {
+        const index = categoryList.findIndex((target) => target === categoryId);
+        return index;
+    }
+    const setCategory = (categoryListIndex, selectElementIndex) => {
+        const targetElement = document.querySelectorAll('select')[selectElementIndex];
+        targetElement.selectedIndex = categoryListIndex;
+        targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    soldCategories.forEach((categoryId, index) => __awaiter(this, void 0, void 0, function* () {
+        const categoryList = getCategoryList(index + 1);
+        let categoryListIndex = judgeWhatNumber(yield categoryList, categoryId);
+        setCategory(categoryListIndex, index);
+    }));
 }
-function judgeWhatNumber(categoryList, categoryId) {
-    const index = categoryList.findIndex((target) => target === categoryId);
-    return index;
-}
-function getCategory2List() {
-    return new Promise((resolve, reject) => {
-        let category2List = [];
-        const interval = setInterval(() => {
-            const targetElement = document.querySelector('[name="category2"] select');
-            if (targetElement) {
-                clearInterval(interval);
-                const category2Options = targetElement.options;
-                for (const option of category2Options) {
-                    category2List.push(option.value);
-                }
-                console.log({ category2: category2List });
-                resolve(category2List);
-            }
-            console.log('getCategory2List 繰り返し');
-        }, 1000);
-    });
-}
-function getCategory3List() {
-    return new Promise((resolve, reject) => {
-        let category3List = [];
-        const interval = setInterval(() => {
-            const targetElement = document.querySelector('[name="category3"] select');
-            if (targetElement) {
-                clearInterval(interval);
-                const category3Options = targetElement.options;
-                for (const option of category3Options) {
-                    category3List.push(option.value);
-                }
-                console.log({ category3: category3List });
-                resolve(category3List);
-            }
-            console.log('getCategory3List 繰り返し');
-        }, 1000);
-    });
-}
-const setCategory = (categoryListIndex, selectElementIndex) => {
-    const targetElement = document.querySelectorAll('select')[selectElementIndex];
-    targetElement.selectedIndex = categoryListIndex;
-    targetElement.dispatchEvent(new Event('change', { bubbles: true }));
-};
 (function () {
     const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
         const targetElement = document.querySelector('input[type="file"]');
         if (targetElement) {
             clearInterval(interval);
             // imageUpload(targetElement);
-            const category1List = getCategory1List();
-            let categoryListIndex = judgeWhatNumber(category1List, '7');
-            setCategory(categoryListIndex, 0);
-            const category2List = getCategory2List();
-            categoryListIndex = judgeWhatNumber(yield category2List, '96');
-            setCategory(categoryListIndex, 1);
-            const category3List = getCategory3List();
-            categoryListIndex = judgeWhatNumber(yield category3List, '841');
-            setCategory(categoryListIndex, 2);
+            setAllCategory(['7', '96', '841']);
             console.log(targetElement);
         }
         console.log('繰り返し');
