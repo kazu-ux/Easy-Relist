@@ -5,7 +5,7 @@ type ProductInfo = {
   shippingPayer: string;
   description: string;
   category: string[];
-  condition: string;
+  itemCondition: string;
   shippingMethod: string;
   shippingFromArea: string;
   shippingDuration: string;
@@ -77,7 +77,7 @@ async function setProduct() {
       .shadowRoot!.querySelector('slot')!
       .assignedNodes()[0].textContent!,
     category: getCategories(),
-    condition: document.querySelector('[title-label="商品の情報"]')!
+    itemCondition: document.querySelector('[title-label="商品の情報"]')!
       .nextElementSibling!.children[1].lastChild!.textContent!,
     shippingMethod: document.querySelector('[title-label="商品の情報"]')!
       .nextElementSibling!.children[3].lastChild!.textContent!,
@@ -105,9 +105,10 @@ async function createRelistButton(element: Element) {
 async function clickEvent() {
   const relistButtonElement = document.querySelector('div.relist-button');
   relistButtonElement!.addEventListener('click', async () => {
-    console.log(await setProduct());
+    const productInfo = await setProduct();
+    console.log(productInfo);
     console.log(getImageUrl());
-    chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', 'test');
+    chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', productInfo);
   });
 }
 

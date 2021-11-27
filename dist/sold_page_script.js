@@ -67,7 +67,7 @@ function setProduct() {
                 .shadowRoot.querySelector('slot')
                 .assignedNodes()[0].textContent,
             category: getCategories(),
-            condition: document.querySelector('[title-label="商品の情報"]')
+            itemCondition: document.querySelector('[title-label="商品の情報"]')
                 .nextElementSibling.children[1].lastChild.textContent,
             shippingMethod: document.querySelector('[title-label="商品の情報"]')
                 .nextElementSibling.children[3].lastChild.textContent,
@@ -95,8 +95,10 @@ function clickEvent() {
     return __awaiter(this, void 0, void 0, function* () {
         const relistButtonElement = document.querySelector('div.relist-button');
         relistButtonElement.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-            console.log(yield setProduct());
+            const productInfo = yield setProduct();
+            console.log(productInfo);
             console.log(getImageUrl());
+            chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', productInfo);
         }));
     });
 }
