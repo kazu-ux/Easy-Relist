@@ -88,6 +88,24 @@ function setCondition(condition: string) {
   targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+function setItemName(itemText: { [key: string]: string }) {
+  const key = Object.keys(itemText)[0];
+  const value = itemText[key];
+  const targetElement: HTMLInputElement = document.querySelector(
+    `input[name=${key}]`
+  )!;
+  targetElement.value = value;
+  targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function setItemDiscription(description: string) {
+  const targetElement: HTMLTextAreaElement = document.querySelector(
+    'textarea[name="description"]'
+  )!;
+  targetElement.value = description;
+  targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
 (function () {
   const interval = setInterval(async () => {
     const targetElement = document.querySelector(
@@ -97,7 +115,9 @@ function setCondition(condition: string) {
       clearInterval(interval);
       // imageUpload(targetElement);
       // setAllCategory(['7', '96', '841']);
-      setCondition('新品、未使用');
+      // setCondition('新品、未使用');
+      setItemName({ name: 'doraemon' });
+      setItemDiscription('のび太');
       console.log(targetElement);
     }
     console.log('繰り返し');

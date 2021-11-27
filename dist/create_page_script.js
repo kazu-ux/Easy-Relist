@@ -74,6 +74,18 @@ function setCondition(condition) {
     targetElement.selectedIndex = judgeWhatNumber(getConditionList(), condition);
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 }
+function setItemName(itemText) {
+    const key = Object.keys(itemText)[0];
+    const value = itemText[key];
+    const targetElement = document.querySelector(`input[name=${key}]`);
+    targetElement.value = value;
+    targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function setItemDiscription(description) {
+    const targetElement = document.querySelector('textarea[name="description"]');
+    targetElement.value = description;
+    targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+}
 (function () {
     const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
         const targetElement = document.querySelector('input[type="file"]');
@@ -81,7 +93,9 @@ function setCondition(condition) {
             clearInterval(interval);
             // imageUpload(targetElement);
             // setAllCategory(['7', '96', '841']);
-            setCondition('新品、未使用');
+            // setCondition('新品、未使用');
+            setItemName({ name: 'doraemon' });
+            setItemDiscription('のび太');
             console.log(targetElement);
         }
         console.log('繰り返し');
