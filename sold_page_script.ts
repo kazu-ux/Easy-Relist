@@ -107,6 +107,7 @@ async function clickEvent() {
   relistButtonElement!.addEventListener('click', async () => {
     console.log(await setProduct());
     console.log(getImageUrl());
+    chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', 'test');
   });
 }
 
