@@ -59,7 +59,9 @@ function setProduct() {
             name: document
                 .querySelector('[data-testid="name"]')
                 .shadowRoot.querySelector('.heading.page').textContent,
-            price: Number(document.querySelector('[data-testid="price"]').getAttribute('value')),
+            price: document
+                .querySelector('[data-testid="price"]')
+                .getAttribute('value'),
             shippingPayer: document.querySelector('[title-label="商品の情報"]')
                 .nextElementSibling.children[2].lastChild.textContent,
             description: document
