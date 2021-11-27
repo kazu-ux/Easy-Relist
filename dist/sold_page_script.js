@@ -8,10 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-/* const element = document.querySelector('#dashboard > div > h2');
-element.addEventListener('click', (e) => {
-  chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', item);
-}) */
 function getImageUrl() {
     let imageUrls = [];
     const imageElements = document.querySelectorAll('.slick-list [sticker]');
@@ -26,7 +22,7 @@ function getBase64(imageUrls) {
     return __awaiter(this, void 0, void 0, function* () {
         const imageBase64s = [];
         for (const imageUrl of imageUrls) {
-            const base64 = yield fetch(imageUrls[0])
+            const base64 = yield fetch(imageUrl)
                 .then((e) => e.blob())
                 .then((blob) => __awaiter(this, void 0, void 0, function* () {
                 const reader = new FileReader();

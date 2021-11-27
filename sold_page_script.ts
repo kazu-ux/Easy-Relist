@@ -11,11 +11,6 @@ type ProductInfo = {
   shippingDuration: string;
 };
 
-/* const element = document.querySelector('#dashboard > div > h2');
-element.addEventListener('click', (e) => {
-  chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', item);
-}) */
-
 function getImageUrl(): string[] {
   let imageUrls: string[] = [];
   const imageElements = document.querySelectorAll('.slick-list [sticker]');
@@ -30,7 +25,7 @@ function getImageUrl(): string[] {
 async function getBase64(imageUrls: string[]) {
   const imageBase64s: string[] = [];
   for (const imageUrl of imageUrls) {
-    const base64 = await fetch(imageUrls[0])
+    const base64 = await fetch(imageUrl)
       .then((e) => e.blob())
       .then(async (blob) => {
         const reader = new FileReader();
