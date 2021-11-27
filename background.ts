@@ -6,7 +6,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     tab.url?.includes('https://jp.mercari.com/item/')
   ) {
     count += 1;
-    // clearTimeout(timer);
+
     if (count === 4) {
       count = 0;
       chrome.scripting.executeScript({
@@ -20,4 +20,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       console.log(tab);
     }
   }
+});
+
+chrome.runtime.onMessage.addListener((result) => {
+  console.log(result);
 });
