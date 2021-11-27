@@ -65,26 +65,28 @@ function setAllCategory(soldCategories: string[]) {
   });
 }
 
-function setCondition(condition: string) {
+function setAboutShipping(aboutShippingObj: { [key: string]: string }) {
+  const key = Object.keys(aboutShippingObj)[0];
+  const value = aboutShippingObj[key];
   const targetElement: HTMLSelectElement = document.querySelector(
-    '[name="itemCondition"] select'
+    `[name=${key}] select`
   )!;
-  function getConditionList(): string[] {
-    let conditionList = [];
+  function getAboutShippingList(): string[] {
+    let aboutShippingList = [];
 
-    const conditionOptions = targetElement.options;
-    for (const options of conditionOptions) {
-      conditionList.push(options.text);
+    const aboutShippingOptions = targetElement.options;
+    for (const options of aboutShippingOptions) {
+      aboutShippingList.push(options.text);
     }
-    console.log(conditionList);
-    return conditionList;
+    console.log(aboutShippingList);
+    return aboutShippingList;
   }
 
-  function judgeWhatNumber(conditionList: string[], condition: string) {
-    return conditionList.findIndex((target) => target === condition);
+  function judgeWhatNumber(aboutShippingList: string[], aboutShipping: string) {
+    return aboutShippingList.findIndex((target) => target === aboutShipping);
   }
 
-  targetElement.selectedIndex = judgeWhatNumber(getConditionList(), condition);
+  targetElement.selectedIndex = judgeWhatNumber(getAboutShippingList(), value);
   targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
@@ -116,8 +118,10 @@ function setItemDiscription(description: string) {
       // imageUpload(targetElement);
       // setAllCategory(['7', '96', '841']);
       // setCondition('新品、未使用');
-      setItemName({ name: 'doraemon' });
-      setItemDiscription('のび太');
+      // setItemName({ name: 'doraemon' });
+      // setItemDiscription('のび太');
+      setAboutShipping({ itemCondition: '新品、未使用' });
+      setAboutShipping({ shippingPayer: '送料込み(出品者負担)' });
       console.log(targetElement);
     }
     console.log('繰り返し');
