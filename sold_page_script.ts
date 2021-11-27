@@ -1,14 +1,14 @@
 type ProductInfo = {
   images: string[];
-  title: string;
+  name: string;
   price: number;
-  shipping: string;
-  text: string;
+  shippingPayer: string;
+  description: string;
   category: string[];
   condition: string;
   shippingMethod: string;
-  region: string;
-  days: string;
+  shippingFromArea: string;
+  shippingDuration: string;
 };
 
 /* const element = document.querySelector('#dashboard > div > h2');
@@ -64,15 +64,15 @@ function getCategories() {
 async function setProduct() {
   const product: ProductInfo = {
     images: await getBase64(getImageUrl())!,
-    title: document
+    name: document
       .querySelector('[data-testid="name"]')!
       .shadowRoot!.querySelector('.heading.page')!.textContent!,
     price: Number(
       document.querySelector('[data-testid="price"]')!.getAttribute('value')
     ),
-    shipping: document.querySelector('[title-label="商品の情報"]')!
+    shippingPayer: document.querySelector('[title-label="商品の情報"]')!
       .nextElementSibling!.children[2]!.lastChild!.textContent!,
-    text: document
+    description: document
       .querySelector('[data-testid="description"]')!
       .shadowRoot!.querySelector('slot')!
       .assignedNodes()[0].textContent!,
@@ -81,9 +81,9 @@ async function setProduct() {
       .nextElementSibling!.children[1].lastChild!.textContent!,
     shippingMethod: document.querySelector('[title-label="商品の情報"]')!
       .nextElementSibling!.children[3].lastChild!.textContent!,
-    region: document.querySelector('[title-label="商品の情報"]')!
+    shippingFromArea: document.querySelector('[title-label="商品の情報"]')!
       .nextElementSibling!.children[4].lastChild!.textContent!,
-    days: document.querySelector('[title-label="商品の情報"]')!
+    shippingDuration: document.querySelector('[title-label="商品の情報"]')!
       .nextElementSibling!.children[5].lastChild!.textContent!,
   };
   return product;
