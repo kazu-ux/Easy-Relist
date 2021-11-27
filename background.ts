@@ -38,19 +38,21 @@ chrome.runtime.onMessage.addListener((productInfo) => {
           if (tabs[0].status === 'complete') {
             clearInterval(interval);
             //スクリプトファイルを注入する
-            chrome.scripting.executeScript({
-              target: { tabId: tab.id! },
-              files: ['dist/create_page_script.js'],
-            });
+            chrome.scripting.executeScript(
+              {
+                target: { tabId: tab.id! },
+                files: ['dist/create_page_script.js'],
+              },
+              () => {
+                chrome.tabs.sendMessage(tab.id!, productInfo);
+              }
+            );
           }
-          console.log(tabs);
         });
         console.log('新しいタブ繰り返し');
       }, 1000);
-
-      console.log(tab);
     }
   );
-  // chrome.tabs.sendMessage();
+
   console.log(productInfo);
 });

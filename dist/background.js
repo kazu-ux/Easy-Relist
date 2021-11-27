@@ -36,14 +36,13 @@ chrome.runtime.onMessage.addListener((productInfo) => {
                     chrome.scripting.executeScript({
                         target: { tabId: tab.id },
                         files: ['dist/create_page_script.js'],
+                    }, () => {
+                        chrome.tabs.sendMessage(tab.id, productInfo);
                     });
                 }
-                console.log(tabs);
             });
             console.log('新しいタブ繰り返し');
         }, 1000);
-        console.log(tab);
     });
-    // chrome.tabs.sendMessage();
     console.log(productInfo);
 });
