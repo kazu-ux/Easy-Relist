@@ -22,8 +22,6 @@ function setBrand(brand: string) {
   )!;
   targetElement.setAttribute('value', brand);
   console.log('ブランド名をセット');
-  // targetElement.dispatchEvent(new Event('input', { bubbles: true }));
-  // targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 async function setAllCategory(soldCategories: string[]) {
@@ -63,17 +61,13 @@ async function setAllCategory(soldCategories: string[]) {
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  const promiseList = await Promise.all(
-    soldCategories.map((categoryId, index) => {
-      return new Promise<number>(async (resolve, reject) => {
-        const categoryList = getCategoryList(index + 1);
-        let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
-        setCategory(categoryListIndex, index);
-        resolve(index);
-      });
+  await Promise.all(
+    soldCategories.map(async (categoryId, index) => {
+      const categoryList = getCategoryList(index + 1);
+      let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
+      setCategory(categoryListIndex, index);
     })
   );
-  console.log(promiseList);
 }
 
 function setAboutShipping(aboutShippingObj: { [key: string]: string }) {

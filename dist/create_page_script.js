@@ -24,8 +24,6 @@ function setBrand(brand) {
     const targetElement = document.querySelector('[data-testid="brand-autocomplete-input"]');
     targetElement.setAttribute('value', brand);
     console.log('ブランド名をセット');
-    // targetElement.dispatchEvent(new Event('input', { bubbles: true }));
-    // targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 }
 function setAllCategory(soldCategories) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -56,15 +54,11 @@ function setAllCategory(soldCategories) {
             targetElement.selectedIndex = categoryListIndex;
             targetElement.dispatchEvent(new Event('change', { bubbles: true }));
         }
-        const promiseList = yield Promise.all(soldCategories.map((categoryId, index) => {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                const categoryList = getCategoryList(index + 1);
-                let categoryListIndex = judgeWhatNumber(yield categoryList, categoryId);
-                setCategory(categoryListIndex, index);
-                resolve(index);
-            }));
-        }));
-        console.log(promiseList);
+        yield Promise.all(soldCategories.map((categoryId, index) => __awaiter(this, void 0, void 0, function* () {
+            const categoryList = getCategoryList(index + 1);
+            let categoryListIndex = judgeWhatNumber(yield categoryList, categoryId);
+            setCategory(categoryListIndex, index);
+        })));
     });
 }
 function setAboutShipping(aboutShippingObj) {
