@@ -1,4 +1,5 @@
 const dataTransfer = new DataTransfer();
+const intervalTimes = 500;
 
 const imageUpload = async (images: string[]) => {
   const targetElement: HTMLInputElement = document.querySelector(
@@ -41,7 +42,7 @@ async function setAllCategory(soldCategories: string[]) {
           resolve(categoryList);
         }
         console.log(`getCategory${index}List 繰り返し`);
-      }, 1000);
+      }, intervalTimes);
     });
   }
 
@@ -67,7 +68,7 @@ async function setAllCategory(soldCategories: string[]) {
   );
 }
 
-function setAboutShipping(aboutShippingObj: { [key: string]: string }) {
+function setItemInfoToSelect(aboutShippingObj: { [key: string]: string }) {
   const key = Object.keys(aboutShippingObj)[0];
   const value = aboutShippingObj[key];
   const targetElement: HTMLSelectElement | null = document.querySelector(
@@ -76,26 +77,36 @@ function setAboutShipping(aboutShippingObj: { [key: string]: string }) {
   if (!targetElement) {
     return;
   }
-  function getAboutShippingList(): string[] {
-    let aboutShippingList = [];
-    if (!targetElement) {
-      return [''];
+
+  return new Promise<void>((resolve, reject) => {
+    function getAboutShippingList(): string[] {
+      let aboutShippingList = [];
+      if (!targetElement) {
+        return [''];
+      }
+
+      const aboutShippingOptions = targetElement.options;
+      for (const options of aboutShippingOptions) {
+        aboutShippingList.push(options.text);
+      }
+      console.log(aboutShippingList);
+      return aboutShippingList;
     }
 
-    const aboutShippingOptions = targetElement.options;
-    for (const options of aboutShippingOptions) {
-      aboutShippingList.push(options.text);
+    function judgeWhatNumber(
+      aboutShippingList: string[],
+      aboutShipping: string
+    ) {
+      return aboutShippingList.findIndex((target) => target === aboutShipping);
     }
-    console.log(aboutShippingList);
-    return aboutShippingList;
-  }
 
-  function judgeWhatNumber(aboutShippingList: string[], aboutShipping: string) {
-    return aboutShippingList.findIndex((target) => target === aboutShipping);
-  }
-
-  targetElement.selectedIndex = judgeWhatNumber(getAboutShippingList(), value);
-  targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+    targetElement.selectedIndex = judgeWhatNumber(
+      getAboutShippingList(),
+      value
+    );
+    targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+    resolve();
+  });
 }
 
 function setItemName(itemText: { [key: string]: string }) {
@@ -128,22 +139,22 @@ async function setToAllItems(productInfo: ProductInfo) {
   imageUpload(productInfo.images);
   await setAllCategory(productInfo.category);
   if (productInfo.size) {
-    setAboutShipping({ size: productInfo.size });
+    setItemInfoToSelect({ size: productInfo.size });
   }
   if (productInfo.brand) {
     setTimeout(() => {
       setBrand(productInfo.brand);
-    }, 1000);
+    }, intervalTimes);
   }
 
   setItemName({ name: productInfo.name });
   setItemDiscription(productInfo.description);
-  setAboutShipping({ itemCondition: productInfo.itemCondition });
+  setItemInfoToSelect({ itemCondition: productInfo.itemCondition });
 
-  setAboutShipping({ shippingPayer: productInfo.shippingPayer });
-  setAboutShipping({ shippingMethod: productInfo.shippingMethod });
-  setAboutShipping({ shippingFromArea: productInfo.shippingFromArea });
-  setAboutShipping({ shippingDuration: productInfo.shippingDuration });
+  await setItemInfoToSelect({ shippingPayer: productInfo.shippingPayer });
+  setItemInfoToSelect({ shippingMethod: productInfo.shippingMethod });
+  setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
+  setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
   setPrice(productInfo.price);
 }
 
@@ -158,5 +169,5 @@ chrome.runtime.onMessage.addListener((productInfo) => {
       console.log(targetElement);
     }
     console.log('繰り返し');
-  }, 1000);
+  }, intervalTimes);
 });
