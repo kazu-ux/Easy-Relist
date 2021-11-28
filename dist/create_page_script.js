@@ -20,6 +20,13 @@ const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
     targetElement.files = dataTransfer.files;
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 });
+function setBrand(brand) {
+    const targetElement = document.querySelector('[data-testid="brand-autocomplete-input"]');
+    targetElement.setAttribute('value', brand);
+    console.log('ブランド名をセット');
+    // targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+    // targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+}
 function setAllCategory(soldCategories) {
     return __awaiter(this, void 0, void 0, function* () {
         function getCategoryList(index) {
@@ -44,21 +51,20 @@ function setAllCategory(soldCategories) {
             const index = categoryList.findIndex((target) => target === categoryId);
             return index;
         }
-        const setCategory = (categoryListIndex, selectElementIndex) => {
+        function setCategory(categoryListIndex, selectElementIndex) {
             const targetElement = document.querySelectorAll('select')[selectElementIndex];
             targetElement.selectedIndex = categoryListIndex;
             targetElement.dispatchEvent(new Event('change', { bubbles: true }));
-        };
-        yield Promise.all(soldCategories.map((categoryId, index) => __awaiter(this, void 0, void 0, function* () {
-            const categoryList = getCategoryList(index + 1);
-            let categoryListIndex = judgeWhatNumber(yield categoryList, categoryId);
-            setCategory(categoryListIndex, index);
-        })));
-        /*   soldCategories.forEach(async (categoryId, index) => {
-          const categoryList = getCategoryList(index + 1);
-          let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
-          setCategory(categoryListIndex, index);
-        }); */
+        }
+        const promiseList = yield Promise.all(soldCategories.map((categoryId, index) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                const categoryList = getCategoryList(index + 1);
+                let categoryListIndex = judgeWhatNumber(yield categoryList, categoryId);
+                setCategory(categoryListIndex, index);
+                resolve(index);
+            }));
+        }));
+        console.log(promiseList);
     });
 }
 function setAboutShipping(aboutShippingObj) {
@@ -99,10 +105,16 @@ function setPrice(price) {
 }
 function setToAllItems(productInfo) {
     return __awaiter(this, void 0, void 0, function* () {
-        imageUpload(productInfo.images);
+        // imageUpload(productInfo.images);
         yield setAllCategory(productInfo.category);
-        setAboutShipping({ size: productInfo.size });
-        // setAboutShipping({ brand: productInfo.brand });
+        if (productInfo.size) {
+            setAboutShipping({ size: productInfo.size });
+        }
+        if (productInfo.brand) {
+            setTimeout(() => {
+                setBrand(productInfo.brand);
+            }, 1000);
+        }
         setItemName({ name: productInfo.name });
         setItemDiscription(productInfo.description);
         setAboutShipping({ itemCondition: productInfo.itemCondition });
@@ -118,7 +130,6 @@ chrome.runtime.onMessage.addListener((productInfo) => {
         const targetElement = document.querySelector('input[type="file"]');
         if (targetElement) {
             clearInterval(interval);
-            //
             setToAllItems(productInfo);
             console.log(targetElement);
         }

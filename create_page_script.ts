@@ -16,7 +16,17 @@ const imageUpload = async (images: string[]) => {
   targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 };
 
-async function setAllCategory(soldCategories: string[]): Promise<void> {
+function setBrand(brand: string) {
+  const targetElement: HTMLElement = document.querySelector(
+    '[data-testid="brand-autocomplete-input"]'
+  )!;
+  targetElement.setAttribute('value', brand);
+  console.log('ブランド名をセット');
+  // targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+  // targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+async function setAllCategory(soldCategories: string[]) {
   function getCategoryList(index: number): Promise<string[]> {
     return new Promise((resolve, reject) => {
       let categoryList: string[] = [];
@@ -45,30 +55,25 @@ async function setAllCategory(soldCategories: string[]): Promise<void> {
     return index;
   }
 
-  const setCategory = (
-    categoryListIndex: number,
-    selectElementIndex: number
-  ) => {
+  function setCategory(categoryListIndex: number, selectElementIndex: number) {
     const targetElement = document.querySelectorAll('select')[
       selectElementIndex
     ] as HTMLSelectElement;
     targetElement.selectedIndex = categoryListIndex;
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
-  };
+  }
 
-  await Promise.all(
-    soldCategories.map(async (categoryId, index) => {
-      const categoryList = getCategoryList(index + 1);
-      let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
-      setCategory(categoryListIndex, index);
+  const promiseList = await Promise.all(
+    soldCategories.map((categoryId, index) => {
+      return new Promise<number>(async (resolve, reject) => {
+        const categoryList = getCategoryList(index + 1);
+        let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
+        setCategory(categoryListIndex, index);
+        resolve(index);
+      });
     })
   );
-
-  /*   soldCategories.forEach(async (categoryId, index) => {
-    const categoryList = getCategoryList(index + 1);
-    let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
-    setCategory(categoryListIndex, index);
-  }); */
+  console.log(promiseList);
 }
 
 function setAboutShipping(aboutShippingObj: { [key: string]: string }) {
@@ -123,10 +128,17 @@ function setPrice(price: string) {
 }
 
 async function setToAllItems(productInfo: ProductInfo) {
-  imageUpload(productInfo.images);
+  // imageUpload(productInfo.images);
   await setAllCategory(productInfo.category);
-  setAboutShipping({ size: productInfo.size });
-  // setAboutShipping({ brand: productInfo.brand });
+  if (productInfo.size) {
+    setAboutShipping({ size: productInfo.size });
+  }
+  if (productInfo.brand) {
+    setTimeout(() => {
+      setBrand(productInfo.brand);
+    }, 1000);
+  }
+
   setItemName({ name: productInfo.name });
   setItemDiscription(productInfo.description);
   setAboutShipping({ itemCondition: productInfo.itemCondition });
@@ -145,7 +157,6 @@ chrome.runtime.onMessage.addListener((productInfo) => {
     ) as HTMLInputElement;
     if (targetElement) {
       clearInterval(interval);
-      //
       setToAllItems(productInfo);
       console.log(targetElement);
     }
