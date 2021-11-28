@@ -109,15 +109,28 @@ async function clickEvent() {
 }
 
 (function () {
+  let count = 0;
   const interval = setInterval(async () => {
-    console.log('sold繰り返し');
-    const element = document.querySelector(
+    count += 1;
+    //一秒ごとにログを表示する
+    if (count % 10 === 0) {
+      console.log('sold繰り返し');
+    }
+
+    /*     const element = document.querySelector(
       '[data-testid="checkout-button-container"]'
+    ); */
+    const element = document.querySelector(
+      '[data-testid="view-transaction-button"]'
     );
     if (element) {
+      count = 0;
       clearInterval(interval);
       await createRelistButton(element);
       await clickEvent();
+    } else if (count === 50) {
+      count = 0;
+      clearInterval(interval);
     }
   }, 100);
 })();

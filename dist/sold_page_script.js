@@ -101,13 +101,26 @@ function clickEvent() {
     });
 }
 (function () {
+    let count = 0;
     const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-        console.log('sold繰り返し');
-        const element = document.querySelector('[data-testid="checkout-button-container"]');
+        count += 1;
+        //一秒ごとにログを表示する
+        if (count % 10 === 0) {
+            console.log('sold繰り返し');
+        }
+        /*     const element = document.querySelector(
+          '[data-testid="checkout-button-container"]'
+        ); */
+        const element = document.querySelector('[data-testid="view-transaction-button"]');
         if (element) {
+            count = 0;
             clearInterval(interval);
             yield createRelistButton(element);
             yield clickEvent();
+        }
+        else if (count === 50) {
+            count = 0;
+            clearInterval(interval);
         }
     }), 100);
 })();
