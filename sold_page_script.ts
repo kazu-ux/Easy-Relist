@@ -1,14 +1,16 @@
 type ProductInfo = {
   images: string[];
-  name: string;
-  price: string;
-  shippingPayer: string;
-  description: string;
   category: string[];
+  size: string;
+  brand: string;
   itemCondition: string;
+  name: string;
+  description: string;
+  shippingPayer: string;
   shippingMethod: string;
   shippingFromArea: string;
   shippingDuration: string;
+  price: string;
 };
 
 function getImageUrl(): string[] {
@@ -18,7 +20,6 @@ function getImageUrl(): string[] {
     const imageUrl = element.getAttribute('src')!;
     imageUrls.push(imageUrl);
   }
-  // await getBase64(imageUrls);
   return imageUrls;
 }
 
@@ -45,7 +46,7 @@ function getCategories() {
   const categoryIds: string[] = [];
   const targetElement = Array.from(
     document.querySelectorAll(
-      '[data-location="item:item_detail_table:link:go_search"]'
+      'mer-breadcrumb-list [data-location="item:item_detail_table:link:go_search"]'
     )
   ).pop()! as HTMLLinkElement;
   const tCategoryIds = targetElement.href.match(/t._category_id=[0-9]*/g)!;
@@ -59,27 +60,28 @@ function getCategories() {
 async function setProduct() {
   const product: ProductInfo = {
     images: await getBase64(getImageUrl())!,
+    category: getCategories(),
+    size: document.querySelector('[data-testid="商品のサイズ"]')?.textContent!,
+    brand:
+      document.querySelector('[data-testid="ブランド"]')?.textContent ?? '',
+    itemCondition: document.querySelector('[data-testid="商品の状態"]')!
+      .textContent!,
     name: document
       .querySelector('[data-testid="name"]')!
-      .shadowRoot!.querySelector('.heading.page')!.textContent!,
+      .getAttribute('title-label')!,
+    description: document.querySelector('[data-testid="description"]')!
+      .textContent!,
+    shippingPayer: document.querySelector('[data-testid="配送料の負担"]')!
+      .textContent!,
+    shippingMethod: document.querySelector('[data-testid="配送の方法"]')!
+      .textContent!,
+    shippingFromArea: document.querySelector('[data-testid="発送元の地域"]')!
+      .textContent!,
+    shippingDuration: document.querySelector('[data-testid="発送までの日数"]')!
+      .textContent!,
     price: document
       .querySelector('[data-testid="price"]')!
       .getAttribute('value')!,
-    shippingPayer: document.querySelector('[title-label="商品の情報"]')!
-      .nextElementSibling!.children[2]!.lastChild!.textContent!,
-    description: document
-      .querySelector('[data-testid="description"]')!
-      .shadowRoot!.querySelector('slot')!
-      .assignedNodes()[0].textContent!,
-    category: getCategories(),
-    itemCondition: document.querySelector('[title-label="商品の情報"]')!
-      .nextElementSibling!.children[1].lastChild!.textContent!,
-    shippingMethod: document.querySelector('[title-label="商品の情報"]')!
-      .nextElementSibling!.children[3].lastChild!.textContent!,
-    shippingFromArea: document.querySelector('[title-label="商品の情報"]')!
-      .nextElementSibling!.children[4].lastChild!.textContent!,
-    shippingDuration: document.querySelector('[title-label="商品の情報"]')!
-      .nextElementSibling!.children[5].lastChild!.textContent!,
   };
   return product;
 }
