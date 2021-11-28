@@ -16,7 +16,7 @@ const imageUpload = async (images: string[]) => {
   targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 };
 
-function setAllCategory(soldCategories: string[]) {
+async function setAllCategory(soldCategories: string[]): Promise<void> {
   function getCategoryList(index: number): Promise<string[]> {
     return new Promise((resolve, reject) => {
       let categoryList: string[] = [];
@@ -56,11 +56,19 @@ function setAllCategory(soldCategories: string[]) {
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
   };
 
-  soldCategories.forEach(async (categoryId, index) => {
+  await Promise.all(
+    soldCategories.map(async (categoryId, index) => {
+      const categoryList = getCategoryList(index + 1);
+      let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
+      setCategory(categoryListIndex, index);
+    })
+  );
+
+  /*   soldCategories.forEach(async (categoryId, index) => {
     const categoryList = getCategoryList(index + 1);
     let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
     setCategory(categoryListIndex, index);
-  });
+  }); */
 }
 
 function setAboutShipping(aboutShippingObj: { [key: string]: string }) {
@@ -114,9 +122,11 @@ function setPrice(price: string) {
   targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
-function setToAllItems(productInfo: ProductInfo) {
+async function setToAllItems(productInfo: ProductInfo) {
   imageUpload(productInfo.images);
-  setAllCategory(productInfo.category);
+  await setAllCategory(productInfo.category);
+  setAboutShipping({ size: productInfo.size });
+  // setAboutShipping({ brand: productInfo.brand });
   setItemName({ name: productInfo.name });
   setItemDiscription(productInfo.description);
   setAboutShipping({ itemCondition: productInfo.itemCondition });

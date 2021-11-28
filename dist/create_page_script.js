@@ -21,38 +21,45 @@ const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 });
 function setAllCategory(soldCategories) {
-    function getCategoryList(index) {
-        return new Promise((resolve, reject) => {
-            let categoryList = [];
-            const interval = setInterval(() => {
-                const targetElement = document.querySelector(`[name="category${index}"] select`);
-                if (targetElement) {
-                    clearInterval(interval);
-                    const categoryOptions = targetElement.options;
-                    for (const option of categoryOptions) {
-                        categoryList.push(option.value);
+    return __awaiter(this, void 0, void 0, function* () {
+        function getCategoryList(index) {
+            return new Promise((resolve, reject) => {
+                let categoryList = [];
+                const interval = setInterval(() => {
+                    const targetElement = document.querySelector(`[name="category${index}"] select`);
+                    if (targetElement) {
+                        clearInterval(interval);
+                        const categoryOptions = targetElement.options;
+                        for (const option of categoryOptions) {
+                            categoryList.push(option.value);
+                        }
+                        console.log({ categoryLIst: categoryList });
+                        resolve(categoryList);
                     }
-                    console.log({ categoryLIst: categoryList });
-                    resolve(categoryList);
-                }
-                console.log(`getCategory${index}List 繰り返し`);
-            }, 1000);
-        });
-    }
-    function judgeWhatNumber(categoryList, categoryId) {
-        const index = categoryList.findIndex((target) => target === categoryId);
-        return index;
-    }
-    const setCategory = (categoryListIndex, selectElementIndex) => {
-        const targetElement = document.querySelectorAll('select')[selectElementIndex];
-        targetElement.selectedIndex = categoryListIndex;
-        targetElement.dispatchEvent(new Event('change', { bubbles: true }));
-    };
-    soldCategories.forEach((categoryId, index) => __awaiter(this, void 0, void 0, function* () {
-        const categoryList = getCategoryList(index + 1);
-        let categoryListIndex = judgeWhatNumber(yield categoryList, categoryId);
-        setCategory(categoryListIndex, index);
-    }));
+                    console.log(`getCategory${index}List 繰り返し`);
+                }, 1000);
+            });
+        }
+        function judgeWhatNumber(categoryList, categoryId) {
+            const index = categoryList.findIndex((target) => target === categoryId);
+            return index;
+        }
+        const setCategory = (categoryListIndex, selectElementIndex) => {
+            const targetElement = document.querySelectorAll('select')[selectElementIndex];
+            targetElement.selectedIndex = categoryListIndex;
+            targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+        yield Promise.all(soldCategories.map((categoryId, index) => __awaiter(this, void 0, void 0, function* () {
+            const categoryList = getCategoryList(index + 1);
+            let categoryListIndex = judgeWhatNumber(yield categoryList, categoryId);
+            setCategory(categoryListIndex, index);
+        })));
+        /*   soldCategories.forEach(async (categoryId, index) => {
+          const categoryList = getCategoryList(index + 1);
+          let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
+          setCategory(categoryListIndex, index);
+        }); */
+    });
 }
 function setAboutShipping(aboutShippingObj) {
     const key = Object.keys(aboutShippingObj)[0];
@@ -91,16 +98,20 @@ function setPrice(price) {
     targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
 function setToAllItems(productInfo) {
-    imageUpload(productInfo.images);
-    setAllCategory(productInfo.category);
-    setItemName({ name: productInfo.name });
-    setItemDiscription(productInfo.description);
-    setAboutShipping({ itemCondition: productInfo.itemCondition });
-    setAboutShipping({ shippingPayer: productInfo.shippingPayer });
-    setAboutShipping({ shippingMethod: productInfo.shippingMethod });
-    setAboutShipping({ shippingFromArea: productInfo.shippingFromArea });
-    setAboutShipping({ shippingDuration: productInfo.shippingDuration });
-    setPrice(productInfo.price);
+    return __awaiter(this, void 0, void 0, function* () {
+        imageUpload(productInfo.images);
+        yield setAllCategory(productInfo.category);
+        setAboutShipping({ size: productInfo.size });
+        // setAboutShipping({ brand: productInfo.brand });
+        setItemName({ name: productInfo.name });
+        setItemDiscription(productInfo.description);
+        setAboutShipping({ itemCondition: productInfo.itemCondition });
+        setAboutShipping({ shippingPayer: productInfo.shippingPayer });
+        setAboutShipping({ shippingMethod: productInfo.shippingMethod });
+        setAboutShipping({ shippingFromArea: productInfo.shippingFromArea });
+        setAboutShipping({ shippingDuration: productInfo.shippingDuration });
+        setPrice(productInfo.price);
+    });
 }
 chrome.runtime.onMessage.addListener((productInfo) => {
     const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
