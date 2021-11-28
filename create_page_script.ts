@@ -1,5 +1,4 @@
 const dataTransfer = new DataTransfer();
-const categories = ['7', '96', '841'];
 
 const imageUpload = async (images: string[]) => {
   const targetElement: HTMLInputElement = document.querySelector(
@@ -21,7 +20,6 @@ function setBrand(brand: string) {
     '[data-testid="brand-autocomplete-input"]'
   )!;
   targetElement.setAttribute('value', brand);
-  console.log('ブランド名をセット');
 }
 
 async function setAllCategory(soldCategories: string[]) {
@@ -40,7 +38,6 @@ async function setAllCategory(soldCategories: string[]) {
             categoryList.push(option.value);
           }
 
-          console.log({ categoryLIst: categoryList });
           resolve(categoryList);
         }
         console.log(`getCategory${index}List 繰り返し`);

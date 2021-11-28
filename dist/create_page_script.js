@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const dataTransfer = new DataTransfer();
-const categories = ['7', '96', '841'];
 const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
     const targetElement = document.querySelector('[data-testid="photo-upload"]');
     for (const i of images) {
@@ -23,7 +22,6 @@ const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
 function setBrand(brand) {
     const targetElement = document.querySelector('[data-testid="brand-autocomplete-input"]');
     targetElement.setAttribute('value', brand);
-    console.log('ブランド名をセット');
 }
 function setAllCategory(soldCategories) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -38,7 +36,6 @@ function setAllCategory(soldCategories) {
                         for (const option of categoryOptions) {
                             categoryList.push(option.value);
                         }
-                        console.log({ categoryLIst: categoryList });
                         resolve(categoryList);
                     }
                     console.log(`getCategory${index}List 繰り返し`);

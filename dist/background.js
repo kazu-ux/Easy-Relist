@@ -15,7 +15,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 target: { tabId: tabId },
                 files: ['style.css'],
             });
-            console.log(tab);
         }
     }
 });
@@ -25,18 +24,19 @@ chrome.runtime.onMessage.addListener((productInfo) => {
         active: true,
         url: 'https://jp.mercari.com/sell/create',
     }, (tab) => {
-        //定期的に新しく開いたタブの情報を取得する
+        //メルカリ出品ページタブの情報を定期的に取得する
         const interval = setInterval(() => {
             //現在開いているタブの読み込み状態を取得する
-            chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+            chrome.tabs.get(tab.id, (tab) => {
                 //読み込みが完了したら…
-                if (tabs[0].status === 'complete') {
+                if (tab.status === 'complete') {
                     clearInterval(interval);
                     //スクリプトファイルを注入する
                     chrome.scripting.executeScript({
                         target: { tabId: tab.id },
                         files: ['dist/create_page_script.js'],
                     }, () => {
+                        //メルカリ出品ページにproductInfoを送る
                         chrome.tabs.sendMessage(tab.id, productInfo);
                     });
                 }
