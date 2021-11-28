@@ -62,8 +62,14 @@ function setAboutShipping(aboutShippingObj) {
     const key = Object.keys(aboutShippingObj)[0];
     const value = aboutShippingObj[key];
     const targetElement = document.querySelector(`[name=${key}] select`);
+    if (!targetElement) {
+        return;
+    }
     function getAboutShippingList() {
         let aboutShippingList = [];
+        if (!targetElement) {
+            return [''];
+        }
         const aboutShippingOptions = targetElement.options;
         for (const options of aboutShippingOptions) {
             aboutShippingList.push(options.text);
@@ -96,7 +102,7 @@ function setPrice(price) {
 }
 function setToAllItems(productInfo) {
     return __awaiter(this, void 0, void 0, function* () {
-        // imageUpload(productInfo.images);
+        imageUpload(productInfo.images);
         yield setAllCategory(productInfo.category);
         if (productInfo.size) {
             setAboutShipping({ size: productInfo.size });

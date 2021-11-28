@@ -70,11 +70,17 @@ async function setAllCategory(soldCategories: string[]) {
 function setAboutShipping(aboutShippingObj: { [key: string]: string }) {
   const key = Object.keys(aboutShippingObj)[0];
   const value = aboutShippingObj[key];
-  const targetElement: HTMLSelectElement = document.querySelector(
+  const targetElement: HTMLSelectElement | null = document.querySelector(
     `[name=${key}] select`
-  )!;
+  );
+  if (!targetElement) {
+    return;
+  }
   function getAboutShippingList(): string[] {
     let aboutShippingList = [];
+    if (!targetElement) {
+      return [''];
+    }
 
     const aboutShippingOptions = targetElement.options;
     for (const options of aboutShippingOptions) {
@@ -119,7 +125,7 @@ function setPrice(price: string) {
 }
 
 async function setToAllItems(productInfo: ProductInfo) {
-  // imageUpload(productInfo.images);
+  imageUpload(productInfo.images);
   await setAllCategory(productInfo.category);
   if (productInfo.size) {
     setAboutShipping({ size: productInfo.size });
