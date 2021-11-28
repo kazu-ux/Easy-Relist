@@ -1,15 +1,11 @@
 {
-  "name": "Getting Started Example",
-  "description": "Build an Extension!",
+  "name": "らくらく再出品",
+  "description": "メルカリの再出品を楽にします。",
   "version": "1.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "dist/background.js"
   },
-  "content_scripts": [],
-  "action": {
-    "default_title": "Click to show an alert"
-  },
-  "permissions": ["activeTab", "scripting", "tabs", "storage"],
+  "permissions": ["activeTab", "scripting", "tabs"],
   "host_permissions": ["https://jp.mercari.com/sell/create"]
 }
