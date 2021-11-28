@@ -42,7 +42,7 @@ chrome.runtime.onMessage.addListener((productInfo) => {
                 }
             });
             console.log('新しいタブ繰り返し');
-        }, 1000);
+        }, 500);
     });
     console.log(productInfo);
 });

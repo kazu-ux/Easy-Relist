@@ -100,19 +100,16 @@ function clickEvent() {
         }));
     });
 }
-chrome.runtime.onMessage.addListener((value) => {
-    alert(value);
-});
 (function () {
     const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-        console.log('繰り返し');
+        console.log('sold繰り返し');
         const element = document.querySelector('[data-testid="checkout-button-container"]');
         if (element) {
             clearInterval(interval);
             yield createRelistButton(element);
             yield clickEvent();
         }
-    }), 1000);
+    }), 100);
 })();
 function _(_) {
     throw new Error('Function not implemented.');

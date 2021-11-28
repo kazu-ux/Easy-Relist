@@ -108,13 +108,9 @@ async function clickEvent() {
   });
 }
 
-chrome.runtime.onMessage.addListener((value) => {
-  alert(value);
-});
-
 (function () {
   const interval = setInterval(async () => {
-    console.log('繰り返し');
+    console.log('sold繰り返し');
     const element = document.querySelector(
       '[data-testid="checkout-button-container"]'
     );
@@ -123,7 +119,7 @@ chrome.runtime.onMessage.addListener((value) => {
       await createRelistButton(element);
       await clickEvent();
     }
-  }, 1000);
+  }, 100);
 })();
 
 function _(_: any) {
