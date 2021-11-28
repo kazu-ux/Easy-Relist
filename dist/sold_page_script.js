@@ -48,13 +48,13 @@ function getCategories() {
     return categoryIds;
 }
 function setProduct() {
-    var _a, _b, _c;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const product = {
             images: yield getBase64(getImageUrl()),
             category: getCategories(),
             size: (_a = document.querySelector('[data-testid="商品のサイズ"]')) === null || _a === void 0 ? void 0 : _a.textContent,
-            brand: (_c = (_b = document.querySelector('[data-testid="ブランド"]')) === null || _b === void 0 ? void 0 : _b.textContent) !== null && _c !== void 0 ? _c : '',
+            brand: (_b = document.querySelector('[data-testid="ブランド"]')) === null || _b === void 0 ? void 0 : _b.textContent,
             itemCondition: document.querySelector('[data-testid="商品の状態"]')
                 .textContent,
             name: document

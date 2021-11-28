@@ -62,8 +62,7 @@ async function setProduct() {
     images: await getBase64(getImageUrl())!,
     category: getCategories(),
     size: document.querySelector('[data-testid="商品のサイズ"]')?.textContent!,
-    brand:
-      document.querySelector('[data-testid="ブランド"]')?.textContent ?? '',
+    brand: document.querySelector('[data-testid="ブランド"]')?.textContent!,
     itemCondition: document.querySelector('[data-testid="商品の状態"]')!
       .textContent!,
     name: document
