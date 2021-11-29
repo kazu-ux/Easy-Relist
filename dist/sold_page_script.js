@@ -115,8 +115,10 @@ function clickEvent() {
         if (element) {
             count = 0;
             clearInterval(interval);
-            yield createRelistButton(element);
-            yield clickEvent();
+            const productInfo = yield setProduct();
+            console.log(productInfo);
+            // await createRelistButton(element);
+            // await clickEvent();
         }
         else if (count === 50) {
             count = 0;

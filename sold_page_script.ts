@@ -126,8 +126,10 @@ async function clickEvent() {
     if (element) {
       count = 0;
       clearInterval(interval);
-      await createRelistButton(element);
-      await clickEvent();
+      const productInfo = await setProduct();
+      console.log(productInfo);
+      // await createRelistButton(element);
+      // await clickEvent();
     } else if (count === 50) {
       count = 0;
       clearInterval(interval);

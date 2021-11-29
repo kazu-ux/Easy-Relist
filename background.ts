@@ -1,32 +1,28 @@
-let count = 0;
-
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (
     changeInfo.status === 'complete' &&
-    tab.url?.includes('https://jp.mercari.com/item/')
+    tab.url?.includes('https://jp.mercari.com/transaction/')
   ) {
-    count += 1;
+    console.log(tab);
 
-    if (count === 4) {
-      count = 0;
-      chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        files: ['dist/sold_page_script.js'],
-      });
-      chrome.scripting.insertCSS({
-        target: { tabId: tabId },
-        files: ['style.css'],
-      });
-    }
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      files: ['dist/trading_page.js'],
+    });
+    chrome.scripting.insertCSS({
+      target: { tabId: tabId },
+      files: ['style.css'],
+    });
   }
 });
 
-chrome.runtime.onMessage.addListener((productInfo) => {
+//productInfoを取得したら商品ページを閉じる
+chrome.runtime.onMessage.addListener((url) => {
   //メルカリ出品ページを開く
   chrome.tabs.create(
     {
       active: true,
-      url: 'https://jp.mercari.com/sell/create',
+      url,
     },
     (tab) => {
       //メルカリ出品ページタブの情報を定期的に取得する
@@ -40,11 +36,11 @@ chrome.runtime.onMessage.addListener((productInfo) => {
             chrome.scripting.executeScript(
               {
                 target: { tabId: tab.id! },
-                files: ['dist/create_page_script.js'],
+                files: ['dist/sold_page_script.js'],
               },
               () => {
                 //メルカリ出品ページにproductInfoを送る
-                chrome.tabs.sendMessage(tab.id!, productInfo);
+                // chrome.tabs.sendMessage(tab.id!, productInfo);
               }
             );
           }
@@ -53,6 +49,4 @@ chrome.runtime.onMessage.addListener((productInfo) => {
       }, 500);
     }
   );
-
-  console.log(productInfo);
 });
