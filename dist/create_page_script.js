@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const dataTransfer = new DataTransfer();
 const intervalTimes = 500;
 const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
+    const dataTransfer = new DataTransfer();
     const targetElement = document.querySelector('[data-testid="photo-upload"]');
     for (const i of images) {
         const request = yield fetch(i).then((e) => e.blob());
@@ -59,30 +59,29 @@ function setAllCategory(soldCategories) {
         })));
     });
 }
-function setItemInfoToSelect(aboutShippingObj) {
-    const key = Object.keys(aboutShippingObj)[0];
-    const value = aboutShippingObj[key];
+function setItemInfoToSelect(itemObjForSelect) {
+    const key = Object.keys(itemObjForSelect)[0];
+    const value = itemObjForSelect[key];
     const targetElement = document.querySelector(`[name=${key}] select`);
     if (!targetElement) {
         return;
     }
     return new Promise((resolve, reject) => {
-        function getAboutShippingList() {
-            let aboutShippingList = [];
+        function getselectOptions() {
+            let selectOptions = [];
             if (!targetElement) {
                 return [''];
             }
-            const aboutShippingOptions = targetElement.options;
-            for (const options of aboutShippingOptions) {
-                aboutShippingList.push(options.text);
+            for (const options of targetElement.options) {
+                selectOptions.push(options.text);
             }
-            console.log(aboutShippingList);
-            return aboutShippingList;
+            console.log(selectOptions);
+            return selectOptions;
         }
-        function judgeWhatNumber(aboutShippingList, aboutShipping) {
-            return aboutShippingList.findIndex((target) => target === aboutShipping);
+        function judgeWhatNumber(selectOptions, selectOprion) {
+            return selectOptions.findIndex((target) => target === selectOprion);
         }
-        targetElement.selectedIndex = judgeWhatNumber(getAboutShippingList(), value);
+        targetElement.selectedIndex = judgeWhatNumber(getselectOptions(), value);
         targetElement.dispatchEvent(new Event('change', { bubbles: true }));
         resolve();
     });

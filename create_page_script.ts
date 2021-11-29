@@ -1,7 +1,7 @@
-const dataTransfer = new DataTransfer();
 const intervalTimes = 500;
 
 const imageUpload = async (images: string[]) => {
+  const dataTransfer = new DataTransfer();
   const targetElement: HTMLInputElement = document.querySelector(
     '[data-testid="photo-upload"]'
   )!;
@@ -68,9 +68,9 @@ async function setAllCategory(soldCategories: string[]) {
   );
 }
 
-function setItemInfoToSelect(aboutShippingObj: { [key: string]: string }) {
-  const key = Object.keys(aboutShippingObj)[0];
-  const value = aboutShippingObj[key];
+function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
+  const key = Object.keys(itemObjForSelect)[0];
+  const value = itemObjForSelect[key];
   const targetElement: HTMLSelectElement | null = document.querySelector(
     `[name=${key}] select`
   );
@@ -79,31 +79,24 @@ function setItemInfoToSelect(aboutShippingObj: { [key: string]: string }) {
   }
 
   return new Promise<void>((resolve, reject) => {
-    function getAboutShippingList(): string[] {
-      let aboutShippingList = [];
+    function getselectOptions(): string[] {
+      let selectOptions = [];
       if (!targetElement) {
         return [''];
       }
 
-      const aboutShippingOptions = targetElement.options;
-      for (const options of aboutShippingOptions) {
-        aboutShippingList.push(options.text);
+      for (const options of targetElement.options) {
+        selectOptions.push(options.text);
       }
-      console.log(aboutShippingList);
-      return aboutShippingList;
+      console.log(selectOptions);
+      return selectOptions;
     }
 
-    function judgeWhatNumber(
-      aboutShippingList: string[],
-      aboutShipping: string
-    ) {
-      return aboutShippingList.findIndex((target) => target === aboutShipping);
+    function judgeWhatNumber(selectOptions: string[], selectOprion: string) {
+      return selectOptions.findIndex((target) => target === selectOprion);
     }
 
-    targetElement.selectedIndex = judgeWhatNumber(
-      getAboutShippingList(),
-      value
-    );
+    targetElement.selectedIndex = judgeWhatNumber(getselectOptions(), value);
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
     resolve();
   });
