@@ -77,29 +77,6 @@ function setProduct() {
         return product;
     });
 }
-function createRelistButton(element) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-            const divElement = document.createElement('div');
-            divElement.className = 'relist-button';
-            divElement.textContent = '再出品する！';
-            const targetElement = element.parentElement;
-            targetElement.appendChild(divElement);
-            resolve(_);
-        }));
-    });
-}
-function clickEvent() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const relistButtonElement = document.querySelector('div.relist-button');
-        relistButtonElement.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-            const productInfo = yield setProduct();
-            console.log(productInfo);
-            console.log(getImageUrl());
-            chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', productInfo);
-        }));
-    });
-}
 (function () {
     let count = 0;
     const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
@@ -117,8 +94,10 @@ function clickEvent() {
             clearInterval(interval);
             const productInfo = yield setProduct();
             console.log(productInfo);
-            // await createRelistButton(element);
-            // await clickEvent();
+            chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', {
+                sender: 'soldPage',
+                productInfo,
+            });
         }
         else if (count === 50) {
             count = 0;
@@ -126,6 +105,3 @@ function clickEvent() {
         }
     }), 100);
 })();
-function _(_) {
-    throw new Error('Function not implemented.');
-}

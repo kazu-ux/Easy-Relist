@@ -49,7 +49,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         return __awaiter(this, void 0, void 0, function* () {
             const relistButtonElement = document.querySelector('div.relist-button');
             relistButtonElement.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-                chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', getItemUrl());
+                chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', {
+                    sender: 'tradingPage',
+                    url: getItemUrl(),
+                });
             }));
         });
     }

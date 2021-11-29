@@ -85,29 +85,6 @@ async function setProduct() {
   return product;
 }
 
-async function createRelistButton(element: Element) {
-  return new Promise(async (resolve, reject) => {
-    const divElement = document.createElement('div');
-    divElement.className = 'relist-button';
-    divElement.textContent = '再出品する！';
-
-    const targetElement = element.parentElement;
-    targetElement!.appendChild(divElement);
-
-    resolve(_);
-  });
-}
-
-async function clickEvent() {
-  const relistButtonElement = document.querySelector('div.relist-button');
-  relistButtonElement!.addEventListener('click', async () => {
-    const productInfo = await setProduct();
-    console.log(productInfo);
-    console.log(getImageUrl());
-    chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', productInfo);
-  });
-}
-
 (function () {
   let count = 0;
   const interval = setInterval(async () => {
@@ -128,15 +105,13 @@ async function clickEvent() {
       clearInterval(interval);
       const productInfo = await setProduct();
       console.log(productInfo);
-      // await createRelistButton(element);
-      // await clickEvent();
+      chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', {
+        sender: 'soldPage',
+        productInfo,
+      });
     } else if (count === 50) {
       count = 0;
       clearInterval(interval);
     }
   }, 100);
 })();
-
-function _(_: any) {
-  throw new Error('Function not implemented.');
-}

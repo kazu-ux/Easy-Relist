@@ -45,10 +45,10 @@
   async function clickEvent() {
     const relistButtonElement = document.querySelector('div.relist-button');
     relistButtonElement!.addEventListener('click', async () => {
-      chrome.runtime.sendMessage(
-        'gejelkpidobampgonfcdkkfgckaphban',
-        getItemUrl()
-      );
+      chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', {
+        sender: 'tradingPage',
+        url: getItemUrl(),
+      });
     });
   }
 })();
