@@ -10,7 +10,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         });
         chrome.scripting.insertCSS({
             target: { tabId: tabId },
-            files: ['style.css'],
+            files: ['css/style.css'],
         });
     }
 });
@@ -21,11 +21,11 @@ chrome.runtime.onMessage.addListener((obj) => {
         case 'tradingPage':
             //メルカリ商品ページを開く
             chrome.tabs.create({
-                active: false,
+                active: true,
                 url: obj.url,
             }, (tab) => {
                 newTabId = tab.id;
-                //メルカリ出品ページタブの情報を定期的に取得する
+                //メルカリ商品ページタブの情報を定期的に取得する
                 const interval = setInterval(() => {
                     //現在開いているタブの読み込み状態を取得する
                     chrome.tabs.get(tab.id, (tab) => {
@@ -33,6 +33,10 @@ chrome.runtime.onMessage.addListener((obj) => {
                         if (tab.status === 'complete') {
                             clearInterval(interval);
                             //スクリプトファイルを注入する
+                            chrome.scripting.insertCSS({
+                                target: { tabId: tab.id },
+                                files: ['css/all_hidden.css'],
+                            });
                             chrome.scripting.executeScript({
                                 target: { tabId: tab.id },
                                 files: ['dist/sold_page_script.js'],
