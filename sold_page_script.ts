@@ -104,6 +104,7 @@ async function setProduct() {
       count = 0;
       clearInterval(interval);
       const productInfo = await setProduct();
+      window.location.href = 'https://jp.mercari.com/sell/create';
       console.log(productInfo);
       chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', {
         sender: 'soldPage',
