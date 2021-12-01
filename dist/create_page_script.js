@@ -12,6 +12,10 @@ const intervalTimes = 500;
 const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
     const dataTransfer = new DataTransfer();
     const targetElement = document.querySelector('[data-testid="photo-upload"]');
+    if (!targetElement) {
+        alert('画像アップロード要素が見つかりません');
+        return;
+    }
     for (const i of images) {
         const request = yield fetch(i).then((e) => e.blob());
         const file = new File([request], Date.now() + '.' + 'jpeg');
@@ -22,6 +26,10 @@ const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
 });
 function setBrand(brand) {
     const targetElement = document.querySelector('[data-testid="brand-autocomplete-input"]');
+    if (!targetElement) {
+        alert('ブランド名入力要素が見つかりません');
+        return;
+    }
     targetElement.setAttribute('value', brand);
 }
 function setAllCategory(soldCategories) {
@@ -38,6 +46,9 @@ function setAllCategory(soldCategories) {
                             categoryList.push(option.value);
                         }
                         resolve(categoryList);
+                    }
+                    else {
+                        alert('カテゴリー選択要素が見つかりません');
                     }
                     console.log(`getCategory${index}List 繰り返し`);
                 }, intervalTimes);
@@ -90,16 +101,28 @@ function setItemName(itemText) {
     const key = Object.keys(itemText)[0];
     const value = itemText[key];
     const targetElement = document.querySelector(`input[name=${key}]`);
+    if (!targetElement) {
+        alert('商品名入力要素が見つかりません');
+        return;
+    }
     targetElement.value = value;
     targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
 function setItemDiscription(description) {
     const targetElement = document.querySelector('textarea[name="description"]');
+    if (!targetElement) {
+        alert('説明文入力要素が見つかりません');
+        return;
+    }
     targetElement.value = description;
     targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
 function setPrice(price) {
     const targetElement = document.querySelector('input[name="price"]');
+    if (!targetElement) {
+        alert('価格入力要素が見つかりません');
+        return;
+    }
     targetElement.value = price;
     targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }

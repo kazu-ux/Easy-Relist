@@ -33,9 +33,13 @@
     });
   }
   function getItemUrl() {
-    const targetElement = document.querySelector(
+    const targetElement: HTMLLinkElement | null = document.querySelector(
       '[data-testid="transaction:information-for-seller"] a'
-    ) as HTMLLinkElement;
+    );
+    if (!targetElement) {
+      alert('商品ページのURL要素が見つかりませんでした');
+      return;
+    }
     const targetUrl = targetElement.href;
     return targetUrl;
   }

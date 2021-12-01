@@ -41,6 +41,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     }
     function getItemUrl() {
         const targetElement = document.querySelector('[data-testid="transaction:information-for-seller"] a');
+        if (!targetElement) {
+            alert('商品ページのURL要素が見つかりませんでした');
+            return;
+        }
         const targetUrl = targetElement.href;
         return targetUrl;
     }

@@ -49,12 +49,13 @@ function getCategories() {
     const categoryIds = [];
     //pop() メソッドは、配列から最後の要素を取り除き、その要素を返します。
     //このメソッドは配列の長さを変化させます。
-    const targetElement = Array.from(document.querySelectorAll('mer-breadcrumb-list [data-location="item:item_detail_table:link:go_search"]')).pop();
-    if (!targetElement) {
+    const targetElements = document.querySelectorAll('mer-breadcrumb-list [data-location="item:item_detail_table:link:go_search"]');
+    const categoryIdElement = Array.from(targetElements).pop();
+    if (!categoryIdElement) {
         alert('カテゴリー要素の取得に失敗しました');
         return [];
     }
-    const tCategoryIds = targetElement.href.match(/t._category_id=[0-9]*/g);
+    const tCategoryIds = categoryIdElement.href.match(/t._category_id=[0-9]*/g);
     if (!tCategoryIds) {
         alert('カテゴリーID取得の正規表現にエラーが発生しました');
         return [''];

@@ -36,21 +36,26 @@ chrome.runtime.onMessage.addListener((obj) => {
                 index: activeTabIndex + 1,
                 url: obj.url,
             }, (tab) => {
-                newTabId = tab.id;
+                const tabId = tab.id;
+                if (!tabId) {
+                    console.log('tabIdが取得できませんでした');
+                    return;
+                }
+                newTabId = tabId;
                 //メルカリ商品ページタブの情報を定期的に取得する
                 const interval = setInterval(() => {
                     //現在開いているタブの読み込み状態を取得する
-                    chrome.tabs.get(tab.id, (tab) => {
+                    chrome.tabs.get(tabId, (tab) => {
                         //読み込みが完了したら…
                         if (tab.status === 'complete') {
                             clearInterval(interval);
                             //スクリプトファイルとCSSを注入する
                             chrome.scripting.insertCSS({
-                                target: { tabId: tab.id },
+                                target: { tabId: tabId },
                                 files: ['css/all_hidden.css'],
                             });
                             chrome.scripting.executeScript({
-                                target: { tabId: tab.id },
+                                target: { tabId: tabId },
                                 files: ['dist/sold_page_script.js'],
                             });
                         }
@@ -65,16 +70,21 @@ chrome.runtime.onMessage.addListener((obj) => {
             const interval = setInterval(() => {
                 //現在開いているタブの読み込み状態を取得する
                 chrome.tabs.get(newTabId, (tab) => {
+                    const tabId = tab.id;
+                    if (!tabId) {
+                        console.log('tabIdが取得できませんでした');
+                        return;
+                    }
                     //読み込みが完了したら…
                     if (tab.status === 'complete') {
                         clearInterval(interval);
                         //スクリプトファイルを注入する
                         chrome.scripting.executeScript({
-                            target: { tabId: tab.id },
+                            target: { tabId: tabId },
                             files: ['dist/create_page_script.js'],
                         }, () => {
                             //メルカリ出品ページにproductInfoを送る
-                            chrome.tabs.sendMessage(tab.id, obj.productInfo);
+                            chrome.tabs.sendMessage(tabId, obj.productInfo);
                         });
                     }
                 });
