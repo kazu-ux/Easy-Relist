@@ -14,8 +14,6 @@
       count = 0;
       clearInterval(interval);
       await createRelistButton(element);
-
-      // await getItemUrl();
       await clickEvent();
     } else if (count === 50) {
       count = 0;

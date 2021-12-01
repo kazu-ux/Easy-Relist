@@ -21,7 +21,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             count = 0;
             clearInterval(interval);
             yield createRelistButton(element);
-            // await getItemUrl();
             yield clickEvent();
         }
         else if (count === 50) {
