@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener(
                 }
               });
               console.log('sold繰り返し');
-            }, 500);
+            }, 1000);
           }
         );
         break;
@@ -102,7 +102,7 @@ chrome.runtime.onMessage.addListener(
             }
           });
           console.log('create繰り返し');
-        }, 500);
+        }, 1000);
 
         break;
 

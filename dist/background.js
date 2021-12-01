@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener((obj) => {
                         }
                     });
                     console.log('sold繰り返し');
-                }, 500);
+                }, 1000);
             });
             break;
         case 'soldPage':
@@ -89,7 +89,7 @@ chrome.runtime.onMessage.addListener((obj) => {
                     }
                 });
                 console.log('create繰り返し');
-            }, 500);
+            }, 1000);
             break;
         default:
             break;

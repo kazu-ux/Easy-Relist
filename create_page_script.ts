@@ -178,7 +178,6 @@ chrome.runtime.onMessage.addListener((productInfo) => {
     if (targetElement) {
       clearInterval(interval);
       setToAllItems(productInfo);
-      console.log(targetElement);
     }
     console.log('繰り返し');
   }, intervalTimes);
