@@ -47,7 +47,7 @@
   async function clickEvent() {
     const relistButtonElement = document.querySelector('div.relist-button');
     relistButtonElement!.addEventListener('click', async () => {
-      chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', {
+      chrome.runtime.sendMessage({
         sender: 'tradingPage',
         url: getItemUrl(),
       });

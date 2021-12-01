@@ -110,7 +110,7 @@ function setProduct() {
             const productInfo = yield setProduct();
             window.location.href = 'https://jp.mercari.com/sell/create';
             console.log(productInfo);
-            chrome.runtime.sendMessage('gejelkpidobampgonfcdkkfgckaphban', {
+            chrome.runtime.sendMessage({
                 sender: 'soldPage',
                 productInfo,
             });
