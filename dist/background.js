@@ -1,12 +1,23 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 let activeTabIndex;
 let newTabId;
 let openerTabId;
+let isOpenerTab;
 //取引ページに再出品ボタンを設置する
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     var _a;
     if (changeInfo.status === 'complete' &&
         ((_a = tab.url) === null || _a === void 0 ? void 0 : _a.includes('https://jp.mercari.com/transaction/'))) {
+        isOpenerTab = true;
         console.log(tab);
         activeTabIndex = tab.index;
         openerTabId = tabId;
@@ -21,12 +32,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 });
 //出品ページタブを閉じた際に、開いたタブをアクティブにする
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-    if (tabId === newTabId) {
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => __awaiter(void 0, void 0, void 0, function* () {
+    if (tabId === openerTabId) {
+        isOpenerTab = false;
+    }
+    if (tabId === newTabId && isOpenerTab) {
         chrome.tabs.update(openerTabId, { active: true });
         console.log({ tabId, removeInfo });
     }
-});
+}));
 chrome.runtime.onMessage.addListener((obj) => {
     switch (obj.sender) {
         case 'tradingPage':

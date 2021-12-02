@@ -1,6 +1,7 @@
 let activeTabIndex: number;
 let newTabId: number;
 let openerTabId: number;
+let isOpenerTab: boolean;
 
 //取引ページに再出品ボタンを設置する
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -8,6 +9,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     changeInfo.status === 'complete' &&
     tab.url?.includes('https://jp.mercari.com/transaction/')
   ) {
+    isOpenerTab = true;
     console.log(tab);
     activeTabIndex = tab.index;
     openerTabId = tabId;
@@ -24,8 +26,12 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 //出品ページタブを閉じた際に、開いたタブをアクティブにする
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  if (tabId === newTabId) {
+chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+  if (tabId === openerTabId) {
+    isOpenerTab = false;
+  }
+
+  if (tabId === newTabId && isOpenerTab) {
     chrome.tabs.update(openerTabId, { active: true });
     console.log({ tabId, removeInfo });
   }
