@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 let activeTabIndex;
 let newTabId;
 let openerTabId;
@@ -34,7 +25,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 });
 //出品ページタブを閉じた際に、開いたタブをアクティブにする
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => __awaiter(void 0, void 0, void 0, function* () {
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+    //
+    //リストに追加するタブIDに条件をつける
+    //
     closedTabId.push(tabId);
     console.log({ closedTabId, tabId });
     if (tabId === openerTabId) {
@@ -44,7 +38,7 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => __awaiter(void 0, void 
         chrome.tabs.update(openerTabId, { active: true });
         console.log({ tabId, removeInfo });
     }
-}));
+});
 chrome.runtime.onMessage.addListener((obj) => {
     switch (obj.sender) {
         case 'tradingPage':
@@ -64,6 +58,7 @@ chrome.runtime.onMessage.addListener((obj) => {
                 const interval = setInterval(() => {
                     if (closedTabId.includes(newTabId)) {
                         clearInterval(interval);
+                        closedTabId = [];
                         return;
                     }
                     //現在開いているタブの読み込み状態を取得する
@@ -92,6 +87,7 @@ chrome.runtime.onMessage.addListener((obj) => {
             const interval = setInterval(() => {
                 if (closedTabId.includes(newTabId)) {
                     clearInterval(interval);
+                    closedTabId = [];
                     return;
                 }
                 //現在開いているタブの読み込み状態を取得する
@@ -103,6 +99,7 @@ chrome.runtime.onMessage.addListener((obj) => {
                     }
                     //読み込みが完了したら…
                     if (tab.status === 'complete') {
+                        closedTabId = [];
                         clearInterval(interval);
                         //スクリプトファイルを注入する
                         chrome.scripting.executeScript({

@@ -29,7 +29,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 //出品ページタブを閉じた際に、開いたタブをアクティブにする
-chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  //
+  //リストに追加するタブIDに条件をつける
+  //
   closedTabId.push(tabId);
   console.log({ closedTabId, tabId });
 
@@ -66,6 +69,7 @@ chrome.runtime.onMessage.addListener(
             const interval = setInterval(() => {
               if (closedTabId.includes(newTabId)) {
                 clearInterval(interval);
+                closedTabId = [];
                 return;
               }
               //現在開いているタブの読み込み状態を取得する
@@ -97,6 +101,7 @@ chrome.runtime.onMessage.addListener(
         const interval = setInterval(() => {
           if (closedTabId.includes(newTabId)) {
             clearInterval(interval);
+            closedTabId = [];
             return;
           }
           //現在開いているタブの読み込み状態を取得する
@@ -108,6 +113,7 @@ chrome.runtime.onMessage.addListener(
             }
             //読み込みが完了したら…
             if (tab.status === 'complete') {
+              closedTabId = [];
               clearInterval(interval);
               //スクリプトファイルを注入する
               chrome.scripting.executeScript(
