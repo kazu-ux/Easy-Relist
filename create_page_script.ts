@@ -84,6 +84,7 @@ function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
     `[name=${key}] select`
   );
   if (!targetElement) {
+    alert('セレクト要素が見つかりません');
     return;
   }
 
