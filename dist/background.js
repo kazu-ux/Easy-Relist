@@ -9,7 +9,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     var _a;
     if (changeInfo.status === 'complete' &&
         ((_a = tab.url) === null || _a === void 0 ? void 0 : _a.includes('https://jp.mercari.com/transaction/'))) {
-        closedTabId = [];
+        closedTabId = 0;
         isOpenerTab = true;
         console.log(tab);
         activeTabIndex = tab.index;
@@ -29,7 +29,7 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
     //
     //リストに追加するタブIDに条件をつける
     //
-    closedTabId.push(tabId);
+    closedTabId = tabId;
     console.log({ closedTabId, tabId });
     if (tabId === openerTabId) {
         isOpenerTab = false;
@@ -56,9 +56,9 @@ chrome.runtime.onMessage.addListener((obj) => {
                 newTabId = tabId;
                 //メルカリ商品ページタブの情報を定期的に取得する
                 const interval = setInterval(() => {
-                    if (closedTabId.includes(newTabId)) {
+                    if (closedTabId === newTabId) {
                         clearInterval(interval);
-                        closedTabId = [];
+                        closedTabId = 0;
                         return;
                     }
                     //現在開いているタブの読み込み状態を取得する
@@ -85,9 +85,9 @@ chrome.runtime.onMessage.addListener((obj) => {
             console.log(newTabId);
             //メルカリ出品ページタブの情報を定期的に取得する
             const interval = setInterval(() => {
-                if (closedTabId.includes(newTabId)) {
+                if (closedTabId === newTabId) {
                     clearInterval(interval);
-                    closedTabId = [];
+                    closedTabId = 0;
                     return;
                 }
                 //現在開いているタブの読み込み状態を取得する
@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener((obj) => {
                     }
                     //読み込みが完了したら…
                     if (tab.status === 'complete') {
-                        closedTabId = [];
+                        closedTabId = 0;
                         clearInterval(interval);
                         //スクリプトファイルを注入する
                         chrome.scripting.executeScript({

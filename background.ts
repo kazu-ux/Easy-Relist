@@ -2,7 +2,7 @@ let activeTabIndex: number;
 let newTabId: number;
 let openerTabId: number;
 let isOpenerTab: boolean;
-let closedTabId: [number?];
+let closedTabId: number;
 
 //取引ページに再出品ボタンを設置する
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -10,7 +10,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     changeInfo.status === 'complete' &&
     tab.url?.includes('https://jp.mercari.com/transaction/')
   ) {
-    closedTabId = [];
+    closedTabId = 0;
     isOpenerTab = true;
     console.log(tab);
 
@@ -33,7 +33,7 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   //
   //リストに追加するタブIDに条件をつける
   //
-  closedTabId.push(tabId);
+  closedTabId = tabId;
   console.log({ closedTabId, tabId });
 
   if (tabId === openerTabId) {
@@ -67,9 +67,9 @@ chrome.runtime.onMessage.addListener(
 
             //メルカリ商品ページタブの情報を定期的に取得する
             const interval = setInterval(() => {
-              if (closedTabId.includes(newTabId)) {
+              if (closedTabId === newTabId) {
                 clearInterval(interval);
-                closedTabId = [];
+                closedTabId = 0;
                 return;
               }
               //現在開いているタブの読み込み状態を取得する
@@ -99,9 +99,9 @@ chrome.runtime.onMessage.addListener(
 
         //メルカリ出品ページタブの情報を定期的に取得する
         const interval = setInterval(() => {
-          if (closedTabId.includes(newTabId)) {
+          if (closedTabId === newTabId) {
             clearInterval(interval);
-            closedTabId = [];
+            closedTabId = 0;
             return;
           }
           //現在開いているタブの読み込み状態を取得する
@@ -113,7 +113,7 @@ chrome.runtime.onMessage.addListener(
             }
             //読み込みが完了したら…
             if (tab.status === 'complete') {
-              closedTabId = [];
+              closedTabId = 0;
               clearInterval(interval);
               //スクリプトファイルを注入する
               chrome.scripting.executeScript(
