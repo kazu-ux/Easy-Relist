@@ -1,0 +1,14 @@
+{
+  "name": "らくらく再出品",
+  "description": "メルカリの再出品を楽にします。",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "128": "icons/らくらく再出品アイコン.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["scripting"],
+  "host_permissions": ["https://jp.mercari.com/"]
+}

@@ -14,7 +14,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     chrome.scripting.executeScript({
       target: { tabId: tabId },
-      files: ['dist/trading_page.js'],
+      files: ['trading_page.js'],
     });
     chrome.scripting.insertCSS({
       target: { tabId: tabId },
@@ -63,7 +63,7 @@ chrome.runtime.onMessage.addListener(
                   });
                   chrome.scripting.executeScript({
                     target: { tabId: tabId },
-                    files: ['dist/sold_page_script.js'],
+                    files: ['sold_page_script.js'],
                   });
                 }
               });
@@ -92,7 +92,7 @@ chrome.runtime.onMessage.addListener(
               chrome.scripting.executeScript(
                 {
                   target: { tabId: tabId },
-                  files: ['dist/create_page_script.js'],
+                  files: ['create_page_script.js'],
                 },
                 () => {
                   //メルカリ出品ページにproductInfoを送る
