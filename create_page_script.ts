@@ -2,9 +2,13 @@ const intervalTimes = 500;
 
 const imageUpload = async (images: string[]) => {
   const dataTransfer = new DataTransfer();
-  const targetElement: HTMLInputElement = document.querySelector(
+  const targetElement: HTMLInputElement | null = document.querySelector(
     '[data-testid="photo-upload"]'
-  )!;
+  );
+  if (!targetElement) {
+    alert('画像アップロード要素が見つかりません');
+    return;
+  }
   for (const i of images) {
     const request = await fetch(i).then((e) => e.blob());
 
@@ -12,14 +16,18 @@ const imageUpload = async (images: string[]) => {
     dataTransfer.items.add(file);
   }
 
-  targetElement.files! = dataTransfer.files!;
+  targetElement.files = dataTransfer.files;
   targetElement.dispatchEvent(new Event('change', { bubbles: true }));
 };
 
 function setBrand(brand: string) {
-  const targetElement: HTMLElement = document.querySelector(
+  const targetElement: HTMLElement | null = document.querySelector(
     '[data-testid="brand-autocomplete-input"]'
-  )!;
+  );
+  if (!targetElement) {
+    alert('ブランド名入力要素が見つかりません');
+    return;
+  }
   targetElement.setAttribute('value', brand);
 }
 
@@ -28,9 +36,9 @@ async function setAllCategory(soldCategories: string[]) {
     return new Promise((resolve, reject) => {
       let categoryList: string[] = [];
       const interval = setInterval(() => {
-        const targetElement: HTMLSelectElement = document.querySelector(
+        const targetElement: HTMLSelectElement | null = document.querySelector(
           `[name="category${index}"] select`
-        )!;
+        );
         if (targetElement) {
           clearInterval(interval);
 
@@ -40,6 +48,8 @@ async function setAllCategory(soldCategories: string[]) {
           }
 
           resolve(categoryList);
+        } else {
+          alert('カテゴリー選択要素が見つかりません');
         }
         console.log(`getCategory${index}List 繰り返し`);
       }, intervalTimes);
@@ -52,9 +62,8 @@ async function setAllCategory(soldCategories: string[]) {
   }
 
   function setCategory(categoryListIndex: number, selectElementIndex: number) {
-    const targetElement = document.querySelectorAll('select')[
-      selectElementIndex
-    ] as HTMLSelectElement;
+    const targetElement =
+      document.querySelectorAll('select')[selectElementIndex];
     targetElement.selectedIndex = categoryListIndex;
     targetElement.dispatchEvent(new Event('change', { bubbles: true }));
   }
@@ -105,25 +114,37 @@ function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
 function setItemName(itemText: { [key: string]: string }) {
   const key = Object.keys(itemText)[0];
   const value = itemText[key];
-  const targetElement: HTMLInputElement = document.querySelector(
+  const targetElement: HTMLInputElement | null = document.querySelector(
     `input[name=${key}]`
-  )!;
+  );
+  if (!targetElement) {
+    alert('商品名入力要素が見つかりません');
+    return;
+  }
   targetElement.value = value;
   targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function setItemDiscription(description: string) {
-  const targetElement: HTMLTextAreaElement = document.querySelector(
+  const targetElement: HTMLTextAreaElement | null = document.querySelector(
     'textarea[name="description"]'
-  )!;
+  );
+  if (!targetElement) {
+    alert('説明文入力要素が見つかりません');
+    return;
+  }
   targetElement.value = description;
   targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function setPrice(price: string) {
-  const targetElement: HTMLInputElement = document.querySelector(
+  const targetElement: HTMLInputElement | null = document.querySelector(
     'input[name="price"]'
-  )!;
+  );
+  if (!targetElement) {
+    alert('価格入力要素が見つかりません');
+    return;
+  }
   targetElement.value = price;
   targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
@@ -153,13 +174,10 @@ async function setToAllItems(productInfo: ProductInfo) {
 
 chrome.runtime.onMessage.addListener((productInfo) => {
   const interval = setInterval(async () => {
-    const targetElement = document.querySelector(
-      'input[type="file"]'
-    ) as HTMLInputElement;
+    const targetElement = document.querySelector('input[type="file"]');
     if (targetElement) {
       clearInterval(interval);
       setToAllItems(productInfo);
-      console.log(targetElement);
     }
     console.log('繰り返し');
   }, intervalTimes);

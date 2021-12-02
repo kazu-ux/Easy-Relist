@@ -3,6 +3,9 @@
   "description": "メルカリの再出品を楽にします。",
   "version": "1.0",
   "manifest_version": 3,
+  "icons": {
+    "128": "work/らくらく再出品アイコン.png"
+  },
   "background": {
     "service_worker": "dist/background.js"
   },
