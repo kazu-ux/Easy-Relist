@@ -2,6 +2,7 @@ let activeTabIndex: number;
 let newTabId: number;
 let openerTabId: number;
 let isOpenerTab: boolean;
+let closedTabId: [number?];
 
 //取引ページに再出品ボタンを設置する
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -9,8 +10,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     changeInfo.status === 'complete' &&
     tab.url?.includes('https://jp.mercari.com/transaction/')
   ) {
+    closedTabId = [];
     isOpenerTab = true;
     console.log(tab);
+
     activeTabIndex = tab.index;
     openerTabId = tabId;
 
@@ -27,6 +30,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 //出品ページタブを閉じた際に、開いたタブをアクティブにする
 chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+  closedTabId.push(tabId);
+  console.log({ closedTabId, tabId });
+
   if (tabId === openerTabId) {
     isOpenerTab = false;
   }
@@ -55,8 +61,13 @@ chrome.runtime.onMessage.addListener(
               return;
             }
             newTabId = tabId;
+
             //メルカリ商品ページタブの情報を定期的に取得する
             const interval = setInterval(() => {
+              if (closedTabId.includes(newTabId)) {
+                clearInterval(interval);
+                return;
+              }
               //現在開いているタブの読み込み状態を取得する
               chrome.tabs.get(tabId, (tab) => {
                 //読み込みが完了したら…
@@ -84,6 +95,10 @@ chrome.runtime.onMessage.addListener(
 
         //メルカリ出品ページタブの情報を定期的に取得する
         const interval = setInterval(() => {
+          if (closedTabId.includes(newTabId)) {
+            clearInterval(interval);
+            return;
+          }
           //現在開いているタブの読み込み状態を取得する
           chrome.tabs.get(newTabId, (tab) => {
             const tabId = tab.id;
