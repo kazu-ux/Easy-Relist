@@ -10,5 +10,5 @@
     "service_worker": "background.js"
   },
   "permissions": ["scripting"],
-  "host_permissions": ["https://jp.mercari.com/"]
+  "host_permissions": ["https://jp.mercari.com/*"]
 }

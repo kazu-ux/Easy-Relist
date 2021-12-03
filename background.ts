@@ -1,7 +1,4 @@
-let activeTabIndex: number;
 let newTabId: number;
-let openerTabId: number;
-let isOpenerTab: boolean;
 let closedTabId: number;
 
 //取引ページに再出品ボタンを設置する
@@ -11,11 +8,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     tab.url?.includes('https://jp.mercari.com/transaction/')
   ) {
     closedTabId = 0;
-    isOpenerTab = true;
-    console.log(tab);
 
-    activeTabIndex = tab.index;
-    openerTabId = tabId;
+    console.log(tab);
 
     chrome.scripting.executeScript({
       target: { tabId: tabId },
@@ -30,68 +24,67 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 //出品ページタブを閉じた際に、開いたタブをアクティブにする
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  //
-  //リストに追加するタブIDに条件をつける
-  //
   closedTabId = tabId;
-  console.log({ closedTabId, tabId });
-
-  if (tabId === openerTabId) {
-    isOpenerTab = false;
-  }
-
-  if (tabId === newTabId && isOpenerTab) {
-    chrome.tabs.update(openerTabId, { active: true });
-    console.log({ tabId, removeInfo });
-  }
+  chrome.tabs.getCurrent((tab) => {
+    console.log(tab);
+  });
 });
 
 chrome.runtime.onMessage.addListener(
   (obj: { sender: string; url?: string; productInfo?: ProductInfo }) => {
     switch (obj.sender) {
       case 'tradingPage':
-        //メルカリ商品ページを開く
-        chrome.tabs.create(
-          {
-            active: true,
-            index: activeTabIndex + 1,
-            url: obj.url,
-          },
-          (tab) => {
-            const tabId = tab.id;
-            if (!tabId) {
-              console.log('tabIdが取得できませんでした');
-              return;
-            }
-            newTabId = tabId;
+        let activeTabIndex: number;
 
-            //メルカリ商品ページタブの情報を定期的に取得する
-            const interval = setInterval(() => {
-              if (closedTabId === newTabId) {
-                clearInterval(interval);
-                closedTabId = 0;
+        chrome.tabs.query({ active: true }, (tab) => {
+          activeTabIndex = tab[0].index;
+          createTab(activeTabIndex);
+        });
+        //メルカリ商品ページを開く
+        function createTab(activeTabIndex: number) {
+          chrome.tabs.create(
+            {
+              active: true,
+              index: activeTabIndex + 1,
+              url: obj.url,
+            },
+            (tab) => {
+              const tabId = tab.id;
+              if (!tabId) {
+                console.log('tabIdが取得できませんでした');
                 return;
               }
-              //現在開いているタブの読み込み状態を取得する
-              chrome.tabs.get(tabId, (tab) => {
-                //読み込みが完了したら…
-                if (tab.status === 'complete') {
+              newTabId = tabId;
+
+              //メルカリ商品ページタブの情報を定期的に取得する
+              const interval = setInterval(() => {
+                if (closedTabId === newTabId) {
                   clearInterval(interval);
-                  //スクリプトファイルとCSSを注入する
-                  chrome.scripting.insertCSS({
-                    target: { tabId: tabId },
-                    files: ['css/all_hidden.css'],
-                  });
-                  chrome.scripting.executeScript({
-                    target: { tabId: tabId },
-                    files: ['sold_page_script.js'],
-                  });
+                  closedTabId = 0;
+                  return;
                 }
-              });
-              console.log('sold繰り返し');
-            }, 1000);
-          }
-        );
+                //現在開いているタブの読み込み状態を取得する
+                chrome.tabs.get(tabId, (tab) => {
+                  //読み込みが完了したら…
+                  if (tab.status === 'complete') {
+                    clearInterval(interval);
+                    //スクリプトファイルとCSSを注入する
+                    chrome.scripting.insertCSS({
+                      target: { tabId: tabId },
+                      files: ['css/all_hidden.css'],
+                    });
+                    chrome.scripting.executeScript({
+                      target: { tabId: tabId },
+                      files: ['sold_page_script.js'],
+                    });
+                  }
+                });
+                console.log('sold繰り返し');
+              }, 1000);
+            }
+          );
+        }
+
         break;
 
       case 'soldPage':
