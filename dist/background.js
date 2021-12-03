@@ -6,7 +6,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     var _a;
     if (changeInfo.status === 'complete' &&
         ((_a = tab.url) === null || _a === void 0 ? void 0 : _a.includes('https://jp.mercari.com/transaction/'))) {
-        closedTabId = 0;
         console.log(tab);
         chrome.scripting.executeScript({
             target: { tabId: tabId },
@@ -17,6 +16,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             files: ['css/style.css'],
         });
     }
+});
+//出品ページタブを閉じた際に、開いたタブをアクティブにする
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+    closedTabId = tabId;
 });
 chrome.runtime.onMessage.addListener((obj) => {
     switch (obj.sender) {
