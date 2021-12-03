@@ -22,22 +22,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-//出品ページタブを閉じた際に、開いたタブをアクティブにする
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  closedTabId = tabId;
-  chrome.tabs.getCurrent((tab) => {
-    console.log(tab);
-  });
-});
-
 chrome.runtime.onMessage.addListener(
   (obj: { sender: string; url?: string; productInfo?: ProductInfo }) => {
     switch (obj.sender) {
       case 'tradingPage':
         let activeTabIndex: number;
 
-        chrome.tabs.query({ active: true }, (tab) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
           activeTabIndex = tab[0].index;
+          console.log({ activeTabIndex });
           createTab(activeTabIndex);
         });
         //メルカリ商品ページを開く
@@ -45,11 +38,12 @@ chrome.runtime.onMessage.addListener(
           chrome.tabs.create(
             {
               active: true,
-              index: activeTabIndex + 1,
+              index: activeTabIndex,
               url: obj.url,
             },
             (tab) => {
               const tabId = tab.id;
+              console.log({ createTabIndex: tab.index });
               if (!tabId) {
                 console.log('tabIdが取得できませんでした');
                 return;
