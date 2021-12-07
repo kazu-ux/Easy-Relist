@@ -17,6 +17,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             console.log('trading繰り返し');
         }
         const element = document.querySelector('[data-testid="transaction:information-for-seller"] mer-list');
+        const relistButtonElement = document.querySelector('div.relist-button');
+        if (relistButtonElement) {
+            count = 0;
+            clearInterval(interval);
+            return;
+        }
         if (element) {
             count = 0;
             clearInterval(interval);
