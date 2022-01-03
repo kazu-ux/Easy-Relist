@@ -23,7 +23,7 @@
       await createRelistButton(element);
       await clickEvent();
     } else if (count === 50) {
-      alert('ターゲット要素が見つかりませんでした');
+      console.log('ターゲット要素が見つかりませんでした');
       count = 0;
       clearInterval(interval);
     }
