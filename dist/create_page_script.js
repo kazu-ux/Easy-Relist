@@ -75,6 +75,7 @@ function setItemInfoToSelect(itemObjForSelect) {
     const value = itemObjForSelect[key];
     const targetElement = document.querySelector(`[name=${key}] select`);
     if (!targetElement) {
+        alert('セレクト要素が見つかりません');
         return;
     }
     return new Promise((resolve, reject) => {

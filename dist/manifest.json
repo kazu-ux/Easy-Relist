@@ -1,0 +1,17 @@
+{
+  "name": "らくらく再出品",
+  "description": "メルカリの再出品を支援します。",
+  "version": "1.2",
+  "manifest_version": 3,
+  "icons": {
+    "16": "/icons/16.png",
+    "32": "/icons/32.png",
+    "48": "/icons/48.png",
+    "128": "/icons/128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["scripting"],
+  "host_permissions": ["https://jp.mercari.com/transaction/*"]
+}
