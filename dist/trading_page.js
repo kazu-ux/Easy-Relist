@@ -27,6 +27,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             count = 0;
             clearInterval(interval);
             yield createRelistButton(element);
+            yield createSellByRakumaButton(element);
             yield clickEvent();
         }
         else if (count === 50) {
@@ -35,18 +36,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             clearInterval(interval);
         }
     }), 100);
-    function createRelistButton(element) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                const divElement = document.createElement('div');
-                divElement.className = 'relist-button';
-                divElement.textContent = '再出品する！';
-                element.appendChild(divElement);
-                resolve();
-            }));
-        });
-    }
-    function getItemUrl() {
+    const createRelistButton = (element) => __awaiter(this, void 0, void 0, function* () {
+        const divElement = document.createElement('div');
+        divElement.className = 'relist-button';
+        divElement.textContent = '再出品する!';
+        element.appendChild(divElement);
+        return;
+    });
+    const createSellByRakumaButton = (element) => __awaiter(this, void 0, void 0, function* () {
+        const divElement = document.createElement('div');
+        divElement.className = 'rakuma-sell';
+        divElement.textContent = 'ラクマで売る!';
+        element.appendChild(divElement);
+        return;
+    });
+    const getItemUrl = () => {
         const targetElement = document.querySelector('[data-testid="transaction:information-for-seller"] a');
         if (!targetElement) {
             alert('商品ページのURL要素が見つかりませんでした');
@@ -54,16 +58,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         }
         const targetUrl = targetElement.href;
         return targetUrl;
-    }
-    function clickEvent() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const relistButtonElement = document.querySelector('div.relist-button');
-            relistButtonElement.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
-                chrome.runtime.sendMessage({
-                    sender: 'tradingPage',
-                    url: getItemUrl(),
-                });
-            }));
-        });
-    }
+    };
+    const clickEvent = () => {
+        const relistButtonElement = document.querySelector('div.relist-button');
+        relistButtonElement.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+            chrome.runtime.sendMessage({
+                sender: 'tradingPage',
+                url: getItemUrl(),
+            });
+        }));
+    };
 })();

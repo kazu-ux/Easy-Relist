@@ -21,6 +21,7 @@
       count = 0;
       clearInterval(interval);
       await createRelistButton(element);
+      await createSellByRakumaButton(element);
       await clickEvent();
     } else if (count === 50) {
       console.log('ターゲット要素が見つかりませんでした');
@@ -29,18 +30,24 @@
     }
   }, 100);
 
-  async function createRelistButton(element: Element): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      const divElement = document.createElement('div');
-      divElement.className = 'relist-button';
-      divElement.textContent = '再出品する！';
+  const createRelistButton = async (element: Element): Promise<void> => {
+    const divElement = document.createElement('div');
+    divElement.className = 'relist-button';
+    divElement.textContent = '再出品する!';
 
-      element.appendChild(divElement);
+    element.appendChild(divElement);
+    return;
+  };
 
-      resolve();
-    });
-  }
-  function getItemUrl() {
+  const createSellByRakumaButton = async (element: Element) => {
+    const divElement = document.createElement('div');
+    divElement.className = 'rakuma-sell';
+    divElement.textContent = 'ラクマで売る!';
+    element.appendChild(divElement);
+    return;
+  };
+
+  const getItemUrl = () => {
     const targetElement: HTMLLinkElement | null = document.querySelector(
       '[data-testid="transaction:information-for-seller"] a'
     );
@@ -50,9 +57,9 @@
     }
     const targetUrl = targetElement.href;
     return targetUrl;
-  }
+  };
 
-  async function clickEvent() {
+  const clickEvent = () => {
     const relistButtonElement = document.querySelector('div.relist-button');
     relistButtonElement!.addEventListener('click', async () => {
       chrome.runtime.sendMessage({
@@ -60,5 +67,5 @@
         url: getItemUrl(),
       });
     });
-  }
+  };
 })();
