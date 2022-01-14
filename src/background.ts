@@ -13,6 +13,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       files: ['css/style.css'],
     });
   }
+  /// 開発用
+  if (
+    changeInfo.status === 'complete' &&
+    tab.url?.includes('https://fril.jp/item/new')
+  ) {
+    chrome.scripting.executeScript({
+      target: { tabId },
+      files: ['rakuma_sell_page.js'],
+    });
+  }
+  ///
 });
 
 const sleep = (time: number) =>
@@ -67,19 +78,27 @@ chrome.webRequest.onSendHeaders.addListener(
   ['requestHeaders', 'extraHeaders']
 );
 
-chrome.runtime.onMessage.addListener((message: { url: string }) => {
-  chrome.tabs.create(
-    { active: true, pinned: false, url: message.url },
-    async (tab) => {
-      const tabId = tab.id!;
+chrome.runtime.onMessage.addListener(
+  (message: { url: string; type: string }, sender, sendResponse) => {
+    chrome.tabs.create(
+      { active: true, pinned: false, url: message.url },
+      async (tab) => {
+        const tabId = tab.id!;
 
-      await new Promise<void>((resolve, reject) => {
-        setTimeout(() => {
-          resolve();
-        }, 2000);
-      });
-      chrome.tabs.remove(tabId);
-    }
-  );
-  // console.log(message.url);
-});
+        await new Promise<void>((resolve, reject) => {
+          setTimeout(() => {
+            resolve();
+          }, 2000);
+        });
+        if (message.type === 'rakuma') {
+          chrome.scripting.executeScript({
+            target: { tabId },
+            files: ['rakuma_sell_page.js'],
+          });
+        }
+
+        // chrome.tabs.remove(tabId);
+      }
+    );
+  }
+);

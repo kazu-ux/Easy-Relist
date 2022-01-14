@@ -36,6 +36,7 @@
     divElement.onclick = () => {
       chrome.runtime.sendMessage({
         url: 'https://jp.mercari.com/sell/create',
+        type: 'mercari',
       });
     };
 
@@ -50,6 +51,7 @@
     divElement.onclick = () => {
       chrome.runtime.sendMessage({
         url: 'https://fril.jp/item/new',
+        type: 'rakuma',
       });
     };
     element.appendChild(divElement);
