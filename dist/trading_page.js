@@ -1,16 +1,7 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 (function () {
     let count = 0;
-    const interval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+    const interval = setInterval(async () => {
         count += 1;
         //一秒ごとにログを表示する
         if (count % 10 === 0) {
@@ -26,30 +17,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         if (element) {
             count = 0;
             clearInterval(interval);
-            yield createRelistButton(element);
-            yield createSellByRakumaButton(element);
-            yield clickEvent();
+            await createRelistButton(element);
+            await createSellByRakumaButton(element);
+            await clickEvent();
         }
         else if (count === 50) {
             console.log('ターゲット要素が見つかりませんでした');
             count = 0;
             clearInterval(interval);
         }
-    }), 100);
-    const createRelistButton = (element) => __awaiter(this, void 0, void 0, function* () {
+    }, 100);
+    const createRelistButton = async (element) => {
         const divElement = document.createElement('div');
         divElement.className = 'relist-button';
         divElement.textContent = '再出品する!';
         element.appendChild(divElement);
         return;
-    });
-    const createSellByRakumaButton = (element) => __awaiter(this, void 0, void 0, function* () {
+    };
+    const createSellByRakumaButton = async (element) => {
         const divElement = document.createElement('div');
         divElement.className = 'rakuma-sell';
         divElement.textContent = 'ラクマで売る!';
         element.appendChild(divElement);
         return;
-    });
+    };
     const getItemUrl = () => {
         const targetElement = document.querySelector('[data-testid="transaction:information-for-seller"] a');
         if (!targetElement) {
@@ -61,11 +52,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     };
     const clickEvent = () => {
         const relistButtonElement = document.querySelector('div.relist-button');
-        relistButtonElement.addEventListener('click', () => __awaiter(this, void 0, void 0, function* () {
+        relistButtonElement.addEventListener('click', async () => {
             chrome.runtime.sendMessage({
-                sender: 'tradingPage',
                 url: getItemUrl(),
             });
-        }));
+        });
     };
 })();

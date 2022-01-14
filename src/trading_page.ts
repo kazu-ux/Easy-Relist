@@ -63,7 +63,6 @@
     const relistButtonElement = document.querySelector('div.relist-button');
     relistButtonElement!.addEventListener('click', async () => {
       chrome.runtime.sendMessage({
-        sender: 'tradingPage',
         url: getItemUrl(),
       });
     });
