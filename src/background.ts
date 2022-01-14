@@ -1,13 +1,9 @@
-let closedTabId: number;
-
 //取引ページに再出品ボタンを設置する
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (
     changeInfo.status === 'complete' &&
     tab.url?.includes('https://jp.mercari.com/transaction/')
   ) {
-    // console.log(tab);
-
     chrome.scripting.executeScript({
       target: { tabId: tabId },
       files: ['trading_page.js'],
@@ -19,12 +15,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-//出品ページタブを閉じた際に、開いたタブをアクティブにする
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  closedTabId = tabId;
-});
-
-let itemId: string;
 chrome.webRequest.onSendHeaders.addListener(
   async (details) => {
     const method = details.method;
@@ -76,7 +66,6 @@ chrome.runtime.onMessage.addListener((message: { url: string }) => {
     { active: false, pinned: true, url: message.url },
     async (tab) => {
       const tabId = tab.id!;
-      const itemId = message.url.split('/')[4];
 
       await new Promise<void>((resolve, reject) => {
         setTimeout(() => {
