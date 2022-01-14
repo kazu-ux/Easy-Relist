@@ -22,7 +22,6 @@
       clearInterval(interval);
       await createRelistButton(element);
       await createSellByRakumaButton(element);
-      await clickEvent();
     } else if (count === 50) {
       console.log('ターゲット要素が見つかりませんでした');
       count = 0;
@@ -34,6 +33,11 @@
     const divElement = document.createElement('div');
     divElement.className = 'relist-button';
     divElement.textContent = '再出品する!';
+    divElement.onclick = () => {
+      chrome.runtime.sendMessage({
+        url: 'https://jp.mercari.com/sell/create',
+      });
+    };
 
     element.appendChild(divElement);
     return;
@@ -43,28 +47,12 @@
     const divElement = document.createElement('div');
     divElement.className = 'rakuma-sell';
     divElement.textContent = 'ラクマで売る!';
+    divElement.onclick = () => {
+      chrome.runtime.sendMessage({
+        url: 'https://fril.jp/item/new',
+      });
+    };
     element.appendChild(divElement);
     return;
-  };
-
-  const getItemUrl = () => {
-    const targetElement: HTMLLinkElement | null = document.querySelector(
-      '[data-testid="transaction:information-for-seller"] a'
-    );
-    if (!targetElement) {
-      alert('商品ページのURL要素が見つかりませんでした');
-      return;
-    }
-    const targetUrl = targetElement.href;
-    return targetUrl;
-  };
-
-  const clickEvent = () => {
-    const relistButtonElement = document.querySelector('div.relist-button');
-    relistButtonElement!.addEventListener('click', async () => {
-      chrome.runtime.sendMessage({
-        url: getItemUrl(),
-      });
-    });
   };
 })();

@@ -13,6 +13,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         });
     }
 });
+const sleep = (time) => new Promise((resolve, reject) => {
+    setTimeout(() => {
+        resolve();
+    }, time);
+});
 chrome.webRequest.onSendHeaders.addListener(async (details) => {
     const method = details.method;
     const initiator = details.initiator;
@@ -30,21 +35,19 @@ chrome.webRequest.onSendHeaders.addListener(async (details) => {
     const requestUrl = details.url;
     const requestHeaders = details.requestHeaders;
     const requestHeader = Object.fromEntries(requestHeaders.map((header) => [header.name, header.value]));
-    // sleep処理
-    await new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve();
-        }, 1000);
-    });
+    // sleep処理 (ms)
+    await sleep(2000);
     const json = await (await fetch(requestUrl, {
         headers: requestHeader,
     })).json();
-    console.log(json);
+    await chrome.storage.local.set({ json });
+    const result = await chrome.storage.local.get(null);
+    console.log(result);
 }, {
     urls: ['https://api.mercari.jp/items/get?id=*'],
 }, ['requestHeaders', 'extraHeaders']);
 chrome.runtime.onMessage.addListener((message) => {
-    chrome.tabs.create({ active: false, pinned: true, url: message.url }, async (tab) => {
+    chrome.tabs.create({ active: true, pinned: false, url: message.url }, async (tab) => {
         const tabId = tab.id;
         await new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -53,4 +56,5 @@ chrome.runtime.onMessage.addListener((message) => {
         });
         chrome.tabs.remove(tabId);
     });
+    // console.log(message.url);
 });
