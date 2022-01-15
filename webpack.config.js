@@ -11,6 +11,7 @@ module.exports = {
   entry: {
     background: path.join(__dirname, 'src/background.ts'),
     rakuma_sell_page: path.join(__dirname, 'src/rakuma_sell_page.ts'),
+    sleep: path.join(__dirname, 'src/sleep.ts'),
     // 'options/options': path.join(__dirname, 'src/options/options.ts'),
   },
 

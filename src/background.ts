@@ -1,3 +1,5 @@
+import { sleep } from './sleep';
+
 //取引ページに再出品ボタンを設置する
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (
@@ -25,13 +27,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
   ///
 });
-
-const sleep = (time: number) =>
-  new Promise<void>((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, time);
-  });
 
 chrome.webRequest.onSendHeaders.addListener(
   async (details) => {
