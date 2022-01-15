@@ -10,7 +10,8 @@
     "128": "/icons/128.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "permissions": ["scripting", "webRequest", "storage"],
   "host_permissions": [

@@ -1,4 +1,10 @@
-"use strict";
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+var __webpack_exports__ = {};
+/*!***************************!*\
+  !*** ./src/background.ts ***!
+  \***************************/
+
 //取引ページに再出品ボタンを設置する
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' &&
@@ -72,3 +78,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // chrome.tabs.remove(tabId);
     });
 });
+
+/******/ })()
+;
