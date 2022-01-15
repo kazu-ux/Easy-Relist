@@ -1,5 +1,5 @@
 import { sleep } from './sleep';
-import { Item } from './types';
+import { Item, ItemCondition } from './types';
 
 (async () => {
   const json: Item = (await chrome.storage.local.get('json')).json.data;
@@ -41,7 +41,55 @@ import { Item } from './types';
     }
   };
 
-  imageUpload(item.photos);
+  const setName = (name: string) => {
+    const targetElement: HTMLInputElement | null =
+      document.querySelector('#name');
+    if (!targetElement) {
+      alert('商品名を入力する要素が見つかりません');
+      return;
+    }
+    targetElement.value = name;
+    targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+  const setDiscription = (description: string) => {
+    const targetElement: HTMLTextAreaElement | null =
+      document.querySelector('#detail');
+    if (!targetElement) {
+      alert('説明文を入力する要素が見つかりません');
+      return;
+    }
+    targetElement.value = description;
+    targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  const setCondition = (itemCondition: ItemCondition) => {
+    const targetElement: HTMLSelectElement | null =
+      document.querySelector('#status');
+
+    if (!targetElement) {
+      return;
+    }
+    const options = Array.from(targetElement.options);
+    const optionIndex = options.flatMap((option, index) => {
+      if (option.textContent === itemCondition.name) {
+        return [index];
+      } else {
+        return [];
+      }
+    })[0];
+    console.log(optionIndex);
+    if (optionIndex === undefined) {
+      return;
+    }
+
+    targetElement.selectedIndex = optionIndex;
+    targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+  };
+
+  // imageUpload(item.photos);
+  setName(item.name);
+  setDiscription(item.description);
+  setCondition(item.item_condition);
 
   console.log(item);
 })();

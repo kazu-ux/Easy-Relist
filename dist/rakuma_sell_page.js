@@ -119,7 +119,49 @@ __webpack_require__.r(__webpack_exports__);
             console.log(photo, inputElement);
         }
     };
-    imageUpload(item.photos);
+    const setName = (name) => {
+        const targetElement = document.querySelector('#name');
+        if (!targetElement) {
+            alert('商品名を入力する要素が見つかりません');
+            return;
+        }
+        targetElement.value = name;
+        targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    const setDiscription = (description) => {
+        const targetElement = document.querySelector('#detail');
+        if (!targetElement) {
+            alert('説明文を入力する要素が見つかりません');
+            return;
+        }
+        targetElement.value = description;
+        targetElement.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    const setCondition = (itemCondition) => {
+        const targetElement = document.querySelector('#status');
+        if (!targetElement) {
+            return;
+        }
+        const options = Array.from(targetElement.options);
+        const optionIndex = options.flatMap((option, index) => {
+            if (option.textContent === itemCondition.name) {
+                return [index];
+            }
+            else {
+                return [];
+            }
+        })[0];
+        console.log(optionIndex);
+        if (optionIndex === undefined) {
+            return;
+        }
+        targetElement.selectedIndex = optionIndex;
+        targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    // imageUpload(item.photos);
+    setName(item.name);
+    setDiscription(item.description);
+    setCondition(item.item_condition);
     console.log(item);
 })();
 
