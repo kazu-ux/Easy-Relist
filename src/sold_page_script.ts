@@ -51,33 +51,24 @@ async function getBase64(imageUrls: string[]) {
 }
 
 function getCategories() {
-  const categoryIds: string[] = [];
-  //pop() メソッドは、配列から最後の要素を取り除き、その要素を返します。
-  //このメソッドは配列の長さを変化させます。
   const targetElements: NodeListOf<HTMLLinkElement> = document.querySelectorAll(
     'mer-breadcrumb-list [data-location="item:item_detail_table:link:go_search"]'
   );
-  const categoryIdElement = Array.from(targetElements).pop();
+  const categoryValues = Array.from(targetElements)
+    .map((element) => {
+      const categoryValueReg = element.href.match(/[0-9]{1,}$/g);
+      if (!categoryValueReg) {
+        alert('カテゴリーIDが正規表現で見つかりません');
+        return '';
+      }
+      const categoryValue = categoryValueReg.toString();
+      return categoryValue;
+    })
+    .filter(Boolean);
 
-  if (!categoryIdElement) {
-    alert('カテゴリー要素の取得に失敗しました');
-    return [];
-  }
-  const tCategoryIds = categoryIdElement.href.match(/t._category_id=[0-9]*/g);
-  if (!tCategoryIds) {
-    alert('カテゴリーID取得の正規表現にエラーが発生しました');
-    return [''];
-  }
-  for (const tCategoryId of tCategoryIds) {
-    const formattedCategoryId = tCategoryId.match(/[0-9]+$/);
-    if (!formattedCategoryId) {
-      alert('カテゴリーIDの整形にエラーが発生しました');
-      return [''];
-    }
-    categoryIds.push(formattedCategoryId[0]);
-  }
-  console.log(categoryIds);
-  return categoryIds;
+  console.log(categoryValues);
+
+  return categoryValues;
 }
 
 async function setProduct() {

@@ -46,30 +46,20 @@ function getBase64(imageUrls) {
     });
 }
 function getCategories() {
-    const categoryIds = [];
-    //pop() メソッドは、配列から最後の要素を取り除き、その要素を返します。
-    //このメソッドは配列の長さを変化させます。
     const targetElements = document.querySelectorAll('mer-breadcrumb-list [data-location="item:item_detail_table:link:go_search"]');
-    const categoryIdElement = Array.from(targetElements).pop();
-    if (!categoryIdElement) {
-        alert('カテゴリー要素の取得に失敗しました');
-        return [];
-    }
-    const tCategoryIds = categoryIdElement.href.match(/t._category_id=[0-9]*/g);
-    if (!tCategoryIds) {
-        alert('カテゴリーID取得の正規表現にエラーが発生しました');
-        return [''];
-    }
-    for (const tCategoryId of tCategoryIds) {
-        const formattedCategoryId = tCategoryId.match(/[0-9]+$/);
-        if (!formattedCategoryId) {
-            alert('カテゴリーIDの整形にエラーが発生しました');
-            return [''];
+    const categoryValues = Array.from(targetElements)
+        .map((element) => {
+        const categoryValueReg = element.href.match(/[0-9]{1,}$/g);
+        if (!categoryValueReg) {
+            alert('カテゴリーIDが正規表現で見つかりません');
+            return '';
         }
-        categoryIds.push(formattedCategoryId[0]);
-    }
-    console.log(categoryIds);
-    return categoryIds;
+        const categoryValue = categoryValueReg.toString();
+        return categoryValue;
+    })
+        .filter(Boolean);
+    console.log(categoryValues);
+    return categoryValues;
 }
 function setProduct() {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
