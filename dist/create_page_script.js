@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const intervalTimes = 500;
+const intervalTimes = 1000;
 const imageUpload = (images) => __awaiter(void 0, void 0, void 0, function* () {
     const dataTransfer = new DataTransfer();
     const targetElement = document.querySelector('[data-testid="photo-upload"]');

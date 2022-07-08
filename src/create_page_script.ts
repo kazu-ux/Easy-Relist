@@ -1,4 +1,4 @@
-const intervalTimes = 500;
+const intervalTimes = 1000;
 
 const imageUpload = async (images: string[]) => {
   const dataTransfer = new DataTransfer();
