@@ -46,8 +46,20 @@ function getBase64(imageUrls) {
     });
 }
 function getCategories() {
-    const targetElements = document.querySelectorAll('mer-breadcrumb-list [data-location="item:item_detail_table:link:go_search"]');
-    const categoryValues = Array.from(targetElements)
+    const categoryTitleEle = document
+        .evaluate('//span[@slot="title"][contains(text(),"カテゴリー")]', document)
+        .iterateNext();
+    if (!categoryTitleEle) {
+        alert('カテゴリータイトルが見つかりません');
+        return [];
+    }
+    const categoryElement = categoryTitleEle.nextSibling;
+    if (!categoryElement) {
+        alert('カテゴリー要素が見つかりません');
+        return [];
+    }
+    const categoryLinks = categoryElement.querySelectorAll('a');
+    const categoryValues = Array.from(categoryLinks)
         .map((element) => {
         const categoryValueReg = element.href.match(/[0-9]{1,}$/g);
         if (!categoryValueReg) {
