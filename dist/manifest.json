@@ -3,8 +3,16 @@
   "name": "らくらく再出品",
   "version": "1.5",
   "options_page": "index.html",
+  "permissions": [
+    "webRequest"
+  ],
   "background": {
     "service_worker": "service-worker-loader.js",
     "type": "module"
-  }
+  },
+  "host_permissions": [
+    "https://api.mercari.jp/items/get?id=*",
+    "https://api.mercari.jp/draft_items/save",
+    "https://jp.mercari.com/transaction/*"
+  ]
 }

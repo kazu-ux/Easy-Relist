@@ -7,6 +7,13 @@ const manifest = defineManifest({
   name: 'らくらく再出品',
   version: '1.5',
   options_page: 'index.html',
+  permissions: ['webRequest'],
+  background: { service_worker: 'src/service_worker.ts' },
+  host_permissions: [
+    'https://api.mercari.jp/items/get?id=*',
+    'https://api.mercari.jp/draft_items/save',
+    'https://jp.mercari.com/transaction/*',
+  ],
 });
 
 export default defineConfig({
