@@ -1,0 +1,6 @@
+{
+  "manifest_version": 3,
+  "name": "らくらく再出品",
+  "version": "1.0.5",
+  "action": { "default_popup": "index.html" }
+}
