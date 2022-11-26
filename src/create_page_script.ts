@@ -167,7 +167,7 @@ async function setToAllItems(productInfo: ProductInfo) {
   setItemInfoToSelect({ itemCondition: productInfo.itemCondition });
 
   await setItemInfoToSelect({ shippingPayer: productInfo.shippingPayer });
-  setItemInfoToSelect({ shippingMethod: productInfo.shippingMethod });
+  // setItemInfoToSelect({ shippingMethod: productInfo.shippingMethod });
   setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
   setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
   setPrice(productInfo.price);
