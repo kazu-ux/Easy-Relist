@@ -1,0 +1,11 @@
+.relist-button {
+  margin-top: 1rem;
+  border-style: solid;
+  border-color: brown;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  color: #da3e50;
+  font-weight: 600;
+  cursor: pointer;
+}
