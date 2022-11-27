@@ -56,7 +56,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
         };
 
         const formData = new FormData();
-        // formData.append('id', String(draftItem.id));
+        formData.append('id', String(draftItem.id));
         formData.append('shipping_duration', String(responseBody.data.shipping_duration.id));
         formData.append('shipping_payer', String(responseBody.data.shipping_payer.id));
         formData.append('shipping_method', String(responseBody.data.shipping_method.id));
@@ -64,7 +64,8 @@ chrome.runtime.onMessage.addListener(async (message) => {
         formData.append('draft_category_id', String(responseBody.data.item_category.id));
         formData.append('category_id', String(responseBody.data.item_category.id));
         formData.append('exhibit_token', draftItem.exhibit_token);
-        // formData.append('uploaded_by_photo_service', 'false');
+        // formData.append('photo_1', String(responseBody.data.photos[0]));
+        // formData.append('uploaded_by_photo_service', 'true');
         // formData.append('sales_fee', String(responseBody.data.price / 10));
         formData.append('name', responseBody.data.name);
         formData.append('price', String(responseBody.data.price));
@@ -75,20 +76,19 @@ chrome.runtime.onMessage.addListener(async (message) => {
           console.log(value);
         }
 
-        // requestHeader['Content-Type'] = 'application/json';
+        const formDataStr = await new Response(formData).text();
+        const boundary = formDataStr.split(/\r/)[0].slice(2);
 
-        /* delete requestHeader.DPoP;
-        delete requestHeader.Authorization; */
-        delete requestHeader['X-Platform'];
+        requestHeader['Content-Type'] = `multipart/form-data; boundary=${boundary}`;
 
-        const request = new Request('https://api.mercari.jp/draft_items/save', {
-          // headers: requestHeader,
+        fetch('https://api.mercari.jp/draft_items/save', {
+          headers: requestHeader,
           method: 'POST',
-          body: formData,
-          // body: JSON.stringify(requestBody),
-        });
-
-        fetch(request).then((response) => {
+          body: formDataStr,
+          referrerPolicy: 'strict-origin-when-cross-origin',
+          credentials: 'include',
+          mode: 'cors',
+        }).then((response) => {
           console.log({ response });
         });
       };
