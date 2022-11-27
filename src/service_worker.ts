@@ -37,24 +37,6 @@ chrome.runtime.onMessage.addListener(async (message) => {
         const responseBody: ResponseBody = (await chrome.storage.local.get('itemData')).itemData;
         const draftItem: DraftItem = (await chrome.storage.local.get('draftItem')).draftItem;
 
-        const requestBody: RequestBody = {
-          // id: draftItem.id,
-          shipping_duration: responseBody.data.shipping_duration.id,
-          shipping_payer: responseBody.data.shipping_payer.id,
-          shipping_method: responseBody.data.shipping_method.id,
-          shipping_from_area: responseBody.data.shipping_from_area.id,
-          // draft_category_id: responseBody.data.item_category.id,
-          // category_id: responseBody.data.item_category.id,
-          exhibit_token: draftItem.exhibit_token,
-          // photo_1: responseBody.data.photos[0],
-          // uploaded_by_photo_service: false,
-          // sales_fee: responseBody.data.price / 10,
-          // name: responseBody.data.name,
-          // price: responseBody.data.price,
-          // description: responseBody.data.description,
-          // item_condition: responseBody.data.item_condition.id,
-        };
-
         const formData = new FormData();
         formData.append('id', String(draftItem.id));
         formData.append('shipping_duration', String(responseBody.data.shipping_duration.id));
@@ -159,7 +141,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
       'https://api.mercari.jp/items/get?id=*',
       'https://api.mercari.jp/draft_items/gets',
       'https://api.mercari.jp/draft_items/save',
-      // 'https://jp.mercari.com/transaction/*',
     ],
   },
   ['requestHeaders']
