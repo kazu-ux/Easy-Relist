@@ -12,6 +12,12 @@ const manifest = defineManifest({
     '48': 'public/icons/48.png',
     '128': 'public/icons/128.png',
   },
+  content_scripts: [
+    {
+      matches: ['https://jp.mercari.com/*'],
+      js: ['src/ContentScripts/content_script.ts'],
+    },
+  ],
   background: {
     service_worker: 'src/Background/background.ts',
   },
