@@ -11,7 +11,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     chrome.scripting.executeScript({
       target: { tabId: tabId },
-      files: ['trading_page.js'],
+      // files: ['trading_page.js'],
+      files: ['trading_page.ts'],
+      // func:tradingPage
     });
     chrome.scripting.insertCSS({
       target: { tabId: tabId },
