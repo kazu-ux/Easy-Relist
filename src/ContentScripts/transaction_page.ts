@@ -23,7 +23,6 @@ const TransactionPage = () => {
       count = 0;
       clearInterval(interval);
       await createRelistButton(element);
-      await clickEvent();
     } else if (count === 50) {
       console.log('ターゲット要素が見つかりませんでした');
       count = 0;
@@ -31,16 +30,22 @@ const TransactionPage = () => {
     }
   }, 100);
 
-  async function createRelistButton(element: Element): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      const divElement = document.createElement('div');
-      divElement.className = 'relist-button';
-      divElement.textContent = '再出品する！';
+  async function createRelistButton(element: Element) {
+    const onClick = () => {
+      chrome.runtime.sendMessage({
+        sender: 'tradingPage',
+        url: getItemUrl(),
+      });
+    };
 
-      element.appendChild(divElement);
+    const divElement = document.createElement('div');
+    divElement.className = 'relist-button';
+    divElement.textContent = '再出品する！';
+    divElement.onclick = onClick;
 
-      resolve();
-    });
+    element.appendChild(divElement);
+
+    return divElement;
   }
   function getItemUrl() {
     const targetElement: HTMLLinkElement | null = document.querySelector(
@@ -52,16 +57,6 @@ const TransactionPage = () => {
     }
     const targetUrl = targetElement.href;
     return targetUrl;
-  }
-
-  async function clickEvent() {
-    const relistButtonElement = document.querySelector('div.relist-button');
-    relistButtonElement!.addEventListener('click', async () => {
-      chrome.runtime.sendMessage({
-        sender: 'tradingPage',
-        url: getItemUrl(),
-      });
-    });
   }
 };
 
