@@ -1,3 +1,5 @@
+import './css/style.css';
+
 const TransactionPage = () => {
   let count = 0;
   const interval = setInterval(async () => {
