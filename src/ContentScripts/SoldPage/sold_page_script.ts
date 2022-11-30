@@ -51,15 +51,15 @@ async function getBase64(imageUrls: string[]) {
 }
 
 function getCategories() {
-  const categoryTitleEle = document
+  const categoryTitleElement = document
     .evaluate('//span[@slot="title"][contains(text(),"カテゴリー")]', document)
     .iterateNext();
-  if (!categoryTitleEle) {
+  if (!categoryTitleElement) {
     alert('カテゴリータイトルが見つかりません');
     return [];
   }
 
-  const categoryElement = <HTMLElement | null>categoryTitleEle.nextSibling;
+  const categoryElement = <HTMLElement | null>categoryTitleElement.nextSibling;
   if (!categoryElement) {
     alert('カテゴリー要素が見つかりません');
     return [];
@@ -77,8 +77,6 @@ function getCategories() {
       return categoryValue;
     })
     .filter(Boolean);
-
-  console.log(categoryValues);
 
   return categoryValues;
 }
@@ -124,9 +122,6 @@ async function setProduct() {
       console.log('sold繰り返し');
     }
 
-    /*     const element = document.querySelector(
-      '[data-testid="checkout-button-container"]'
-    ); */
     const element = document.querySelector(
       '[data-testid="view-transaction-button"]'
     );
