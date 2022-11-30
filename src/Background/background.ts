@@ -1,27 +1,6 @@
 let newTabId: number;
 let closedTabId: number;
 
-//取引ページに再出品ボタンを設置する
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (
-    changeInfo.status === 'complete' &&
-    tab.url?.includes('https://jp.mercari.com/transaction/')
-  ) {
-    console.log(tab);
-
-    chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      // files: ['trading_page.js'],
-      files: ['trading_page.ts'],
-      // func:tradingPage
-    });
-    chrome.scripting.insertCSS({
-      target: { tabId: tabId },
-      files: ['css/style.css'],
-    });
-  }
-});
-
 //出品ページタブを閉じた際に、開いたタブをアクティブにする
 chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   closedTabId = tabId;
