@@ -1,16 +1,18 @@
 import TransactionPage from './TransactionPage/transaction_page';
 
-let href = location.href;
+const isTransactionPage = (url: string) => {
+  return url.includes('https://jp.mercari.com/transaction/');
+};
 
-TransactionPage();
+let href = location.href;
+if (isTransactionPage(href)) {
+  TransactionPage();
+}
 
 const observer = new MutationObserver(() => {
   if (href === location.href) return;
 
-  const isTransactionPage = location.href.includes(
-    'https://jp.mercari.com/transaction/'
-  );
-  if (!isTransactionPage) return;
+  if (!isTransactionPage(location.href)) return;
   TransactionPage();
 
   href = location.href;
