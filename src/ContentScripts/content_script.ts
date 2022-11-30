@@ -1,4 +1,4 @@
-import TransactionPage from './transaction_page';
+import TransactionPage from './TransactionPage/transaction_page';
 
 let href = location.href;
 
