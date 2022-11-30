@@ -14,7 +14,7 @@ type ProductInfo = {
 };
 
 function getImageUrl(): string[] {
-  let imageUrls: string[] = [];
+  const imageUrls: string[] = [];
   const imageElements = document.querySelectorAll('.slick-list [sticker]');
   for (const element of imageElements) {
     const imageUrl = element.getAttribute('src');
@@ -134,12 +134,12 @@ async function setProduct() {
       count = 0;
       clearInterval(interval);
       const productInfo = await setProduct();
-      window.location.href = 'https://jp.mercari.com/sell/create';
+      // window.location.href = 'https://jp.mercari.com/sell/create';
       console.log(productInfo);
-      chrome.runtime.sendMessage({
+      /*  chrome.runtime.sendMessage({
         sender: 'soldPage',
         productInfo,
-      });
+      }); */
     } else if (count === 50) {
       count = 0;
       clearInterval(interval);
