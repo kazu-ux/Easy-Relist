@@ -1,4 +1,4 @@
-(function () {
+const TransactionPage = () => {
   let count = 0;
   const interval = setInterval(async () => {
     count += 1;
@@ -61,4 +61,6 @@
       });
     });
   }
-})();
+};
+
+export default TransactionPage;
