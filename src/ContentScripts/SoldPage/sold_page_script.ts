@@ -119,6 +119,7 @@ async function setProduct() {
 
       await ChromeStorage.setItemData(itemData);
       console.log(await ChromeStorage.getItemData());
+      window.location.href = 'https://jp.mercari.com/sell/create';
     } else if (count === 50) {
       count = 0;
       clearInterval(interval);
