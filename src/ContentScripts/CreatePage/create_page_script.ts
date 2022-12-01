@@ -179,9 +179,11 @@ const interval = setInterval(async () => {
   const targetElement = document.querySelector('input[type="file"]');
   if (targetElement) {
     const itemData = await ChromeStorage.getItemData();
+    if (!itemData) return;
 
     clearInterval(interval);
     setToAllItems(itemData);
+    ChromeStorage.deleteItemData();
   }
   console.log('繰り返し');
 }, intervalTimes);
