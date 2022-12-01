@@ -1,17 +1,4 @@
-type ProductInfo = {
-  images: string[];
-  category: string[];
-  size: string;
-  brand: string;
-  itemCondition: string;
-  name: string;
-  description: string;
-  shippingPayer: string;
-  shippingMethod: string;
-  shippingFromArea: string;
-  shippingDuration: string;
-  price: string;
-};
+import ChromeStorage from '../../Storage/chrome_storage';
 
 function getImageUrl(): string[] {
   const imageUrls: string[] = [];
@@ -82,7 +69,7 @@ function getCategories() {
 }
 
 async function setProduct() {
-  const product: ProductInfo = {
+  const product: ItemData = {
     images: await getBase64(getImageUrl()),
     category: getCategories(),
     size:
@@ -128,13 +115,10 @@ async function setProduct() {
     if (element) {
       count = 0;
       clearInterval(interval);
-      const productInfo = await setProduct();
-      // window.location.href = 'https://jp.mercari.com/sell/create';
-      console.log(productInfo);
-      /*  chrome.runtime.sendMessage({
-        sender: 'soldPage',
-        productInfo,
-      }); */
+      const itemData = await setProduct();
+
+      await ChromeStorage.setItemData(itemData);
+      console.log(await ChromeStorage.getItemData());
     } else if (count === 50) {
       count = 0;
       clearInterval(interval);
