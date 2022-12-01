@@ -1,3 +1,5 @@
+import ChromeStorage from '../../Storage/chrome_storage';
+
 const intervalTimes = 1000;
 
 const imageUpload = async (images: string[]) => {
@@ -173,13 +175,13 @@ async function setToAllItems(productInfo: ItemData) {
   setPrice(productInfo.price);
 }
 
-chrome.runtime.onMessage.addListener((productInfo) => {
-  const interval = setInterval(async () => {
-    const targetElement = document.querySelector('input[type="file"]');
-    if (targetElement) {
-      clearInterval(interval);
-      setToAllItems(productInfo);
-    }
-    console.log('繰り返し');
-  }, intervalTimes);
-});
+const interval = setInterval(async () => {
+  const targetElement = document.querySelector('input[type="file"]');
+  if (targetElement) {
+    const itemData = await ChromeStorage.getItemData();
+
+    clearInterval(interval);
+    setToAllItems(itemData);
+  }
+  console.log('繰り返し');
+}, intervalTimes);
