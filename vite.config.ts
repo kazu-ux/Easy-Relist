@@ -25,7 +25,7 @@ const manifest = defineManifest({
   background: {
     service_worker: 'src/Background/background.ts',
   },
-  permissions: ['scripting'],
+  permissions: ['scripting', 'storage'],
   host_permissions: ['https://jp.mercari.com/transaction/*'],
 });
 
