@@ -34,7 +34,7 @@ function setBrand(brand: string) {
 async function setAllCategory(soldCategories: string[]) {
   function getCategoryList(index: number): Promise<string[]> {
     return new Promise((resolve, reject) => {
-      let categoryList: string[] = [];
+      const categoryList: string[] = [];
       const interval = setInterval(() => {
         const targetElement: HTMLSelectElement | null = document.querySelector(
           `[name="category${index}"] select`
@@ -71,7 +71,7 @@ async function setAllCategory(soldCategories: string[]) {
   await Promise.all(
     soldCategories.map(async (categoryId, index) => {
       const categoryList = getCategoryList(index + 1);
-      let categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
+      const categoryListIndex = judgeWhatNumber(await categoryList, categoryId);
       setCategory(categoryListIndex, index);
     })
   );
@@ -90,7 +90,7 @@ function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
 
   return new Promise<void>((resolve, reject) => {
     function getselectOptions(): string[] {
-      let selectOptions = [];
+      const selectOptions = [];
       if (!targetElement) {
         return [''];
       }
@@ -150,7 +150,7 @@ function setPrice(price: string) {
   targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
-async function setToAllItems(productInfo: ProductInfo) {
+async function setToAllItems(productInfo: ItemData) {
   imageUpload(productInfo.images);
   await setAllCategory(productInfo.category);
   if (productInfo.size) {
