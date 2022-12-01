@@ -21,6 +21,10 @@ const manifest = defineManifest({
       matches: ['https://jp.mercari.com/item/*'],
       js: ['src/ContentScripts/SoldPage/sold_page_script.ts'],
     },
+    {
+      matches: ['https://jp.mercari.com/sell/create'],
+      js: ['src/ContentScripts/CreatePage/create_page_script.ts'],
+    },
   ],
   background: {
     service_worker: 'src/Background/background.ts',
