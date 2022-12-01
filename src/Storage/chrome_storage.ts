@@ -2,8 +2,8 @@ const setItemData = (itemData: ItemData) => {
   return chrome.storage.local.set({ itemData });
 };
 
-const getItemData = async () => {
-  return (await chrome.storage.local.get('itemData')).itemData as ItemData;
+const getItemData = async (): Promise<ItemData | undefined> => {
+  return (await chrome.storage.local.get('itemData')).itemData;
 };
 
 const deleteItemData = () => {
