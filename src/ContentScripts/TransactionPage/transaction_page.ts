@@ -32,10 +32,7 @@ const TransactionPage = () => {
 
   async function createRelistButton(element: Element) {
     const onClick = () => {
-      chrome.runtime.sendMessage({
-        sender: 'tradingPage',
-        url: getItemUrl(),
-      });
+      window.open(getItemUrl());
     };
 
     const divElement = document.createElement('div');
@@ -53,7 +50,7 @@ const TransactionPage = () => {
     );
     if (!targetElement) {
       alert('商品ページのURL要素が見つかりませんでした');
-      return;
+      return '';
     }
     const targetUrl = targetElement.href;
     return targetUrl;
