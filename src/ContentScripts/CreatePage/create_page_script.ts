@@ -169,11 +169,40 @@ async function setToAllItems(productInfo: ItemData) {
   setItemInfoToSelect({ itemCondition: productInfo.itemCondition });
 
   await setItemInfoToSelect({ shippingPayer: productInfo.shippingPayer });
-  // setItemInfoToSelect({ shippingMethod: productInfo.shippingMethod });
   setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
   setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
   setPrice(productInfo.price);
 }
+
+const setShippingMethod = async (shippingMethod: string) => {
+  const targetElement = document.querySelector<HTMLLinkElement>(
+    'a[href="/sell/shipping_methods"]'
+  );
+  if (!targetElement) {
+    return;
+  }
+  targetElement.click();
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  const shippingMethods = document.querySelectorAll<HTMLInputElement>(
+    'input[name="selectedShippingMethod"]'
+  );
+  console.log(shippingMethods);
+  shippingMethods.forEach(async (element) => {
+    console.log(element);
+
+    if (!(element.getAttribute('aria-label') === shippingMethod)) return;
+    element.click();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const xpath = "//button[contains(text(), '更新する')]";
+    const resultType = XPathResult.FIRST_ORDERED_NODE_TYPE;
+    const button = document.evaluate(xpath, document, null, resultType, null)
+      .singleNodeValue as HTMLButtonElement | null;
+    if (!button) return;
+    button.click();
+  });
+};
 
 const interval = setInterval(async () => {
   const targetElement = document.querySelector('input[type="file"]');
@@ -183,7 +212,10 @@ const interval = setInterval(async () => {
 
     clearInterval(interval);
     setToAllItems(itemData);
-    ChromeStorage.deleteItemData();
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setShippingMethod(itemData.shippingMethod);
+    // ChromeStorage.deleteItemData();
   }
   console.log('繰り返し');
 }, intervalTimes);
