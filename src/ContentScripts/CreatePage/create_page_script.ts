@@ -172,29 +172,57 @@ async function setToAllItems(productInfo: ItemData) {
   setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
   setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
   setPrice(productInfo.price);
+  return;
 }
 
+const waitForElement = (selector: string) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log('timeout');
+
+      reject(new Error('timeout'));
+    }, 5000);
+    if (document.querySelectorAll(selector)[0]) {
+      return resolve(document.querySelectorAll(selector));
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      if (document.querySelectorAll(selector)[0]) {
+        resolve(document.querySelectorAll(selector));
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  });
+};
+
 const setShippingMethod = async (shippingMethod: string) => {
-  const targetElement = document.querySelector<HTMLLinkElement>(
+  // 発送方法選択ページに遷移
+  const shippingMethodsPageTransitionLink = (await waitForElement(
     'a[href="/sell/shipping_methods"]'
-  );
-  if (!targetElement) {
-    return;
-  }
-  targetElement.click();
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  )) as HTMLLinkElement[];
 
-  const shippingMethods = document.querySelectorAll<HTMLInputElement>(
+  if (!shippingMethodsPageTransitionLink) return;
+
+  shippingMethodsPageTransitionLink[0].click();
+
+  // 発送方法を選択
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  const shippingMethods = (await waitForElement(
     'input[name="selectedShippingMethod"]'
-  );
-  console.log(shippingMethods);
-  shippingMethods.forEach(async (element) => {
-    console.log(element);
+  )) as HTMLInputElement[];
 
+  shippingMethods.forEach(async (element) => {
     if (!(element.getAttribute('aria-label') === shippingMethod)) return;
     element.click();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
+    // 「更新する」ボタンをクリック
     const xpath = "//button[contains(text(), '更新する')]";
     const resultType = XPathResult.FIRST_ORDERED_NODE_TYPE;
     const button = document.evaluate(xpath, document, null, resultType, null)
@@ -204,18 +232,14 @@ const setShippingMethod = async (shippingMethod: string) => {
   });
 };
 
-const interval = setInterval(async () => {
-  const targetElement = document.querySelector('input[type="file"]');
-  if (targetElement) {
-    const itemData = await ChromeStorage.getItemData();
-    if (!itemData) return;
+const setup = async () => {
+  console.log(await waitForElement('input[type="file"]'));
+  const itemData = await ChromeStorage.getItemData();
+  if (!itemData) return;
 
-    clearInterval(interval);
-    setToAllItems(itemData);
+  await setToAllItems(itemData);
+  setShippingMethod(itemData.shippingMethod);
+  // ChromeStorage.deleteItemData();
+};
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setShippingMethod(itemData.shippingMethod);
-    // ChromeStorage.deleteItemData();
-  }
-  console.log('繰り返し');
-}, intervalTimes);
+setup();
