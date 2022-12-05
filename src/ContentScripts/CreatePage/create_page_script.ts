@@ -201,6 +201,8 @@ const waitForElement = (selector: string) => {
 };
 
 const setShippingMethod = async (shippingMethod: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   // 発送方法選択ページに遷移
   const shippingMethodsPageTransitionLink = (await waitForElement(
     'a[href="/sell/shipping_methods"]'
@@ -239,7 +241,7 @@ const setup = async () => {
 
   await setToAllItems(itemData);
   setShippingMethod(itemData.shippingMethod);
-  // ChromeStorage.deleteItemData();
+  ChromeStorage.deleteItemData();
 };
 
 setup();
