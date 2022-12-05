@@ -10,10 +10,20 @@ const deleteItemData = () => {
   return chrome.storage.local.remove('itemData');
 };
 
+const setIsLoading = (isLoading: boolean) => {
+  return chrome.storage.local.set({ isLoading });
+};
+
+const getIsLoading = async (): Promise<boolean | undefined> => {
+  return (await chrome.storage.local.get('isLoading')).isLoading;
+};
+
 const ChromeStorage = {
   setItemData,
   getItemData,
   deleteItemData,
+  setIsLoading,
+  getIsLoading,
 };
 
 export default ChromeStorage;
