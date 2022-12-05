@@ -242,6 +242,7 @@ const setup = async () => {
   await setToAllItems(itemData);
   setShippingMethod(itemData.shippingMethod);
   ChromeStorage.deleteItemData();
+  await ChromeStorage.setIsLoading(false);
 };
 
 setup();

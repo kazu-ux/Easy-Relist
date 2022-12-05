@@ -1,3 +1,4 @@
+import ChromeStorage from '../../Storage/chrome_storage';
 import './css/style.css';
 
 const TransactionPage = () => {
@@ -31,7 +32,8 @@ const TransactionPage = () => {
   }, 100);
 
   async function createRelistButton(element: Element) {
-    const onClick = () => {
+    const onClick = async () => {
+      await ChromeStorage.setIsLoading(true);
       window.open(getItemUrl());
     };
 

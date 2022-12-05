@@ -115,6 +115,8 @@ async function setProduct() {
     if (element) {
       count = 0;
       clearInterval(interval);
+      const isLoading = await ChromeStorage.getIsLoading();
+      if (!isLoading) return;
       const itemData = await setProduct();
 
       await ChromeStorage.setItemData(itemData);
