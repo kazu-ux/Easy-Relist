@@ -33,7 +33,7 @@ function setBrand(brand: string) {
   targetElement.setAttribute('value', brand);
 }
 
-async function setAllCategory(soldCategories: string[]) {
+/* async function setAllCategory(soldCategories: string[]) {
   function getCategoryList(index: number): Promise<string[]> {
     return new Promise((resolve, reject) => {
       const categoryList: string[] = [];
@@ -77,7 +77,7 @@ async function setAllCategory(soldCategories: string[]) {
       setCategory(categoryListIndex, index);
     })
   );
-}
+} */
 
 function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
   const key = Object.keys(itemObjForSelect)[0];
@@ -85,10 +85,7 @@ function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
   const targetElement: HTMLSelectElement | null = document.querySelector(
     `[name=${key}] select`
   );
-  if (!targetElement) {
-    alert('セレクト要素が見つかりません');
-    return;
-  }
+  if (!targetElement) return;
 
   return new Promise<void>((resolve, reject) => {
     function getselectOptions(): string[] {
@@ -154,7 +151,7 @@ function setPrice(price: string) {
 
 async function setToAllItems(productInfo: ItemData) {
   imageUpload(productInfo.images);
-  await setAllCategory(productInfo.category);
+  // await setAllCategory(productInfo.category);
   if (productInfo.size) {
     setItemInfoToSelect({ size: productInfo.size });
   }
@@ -169,6 +166,7 @@ async function setToAllItems(productInfo: ItemData) {
   setItemInfoToSelect({ itemCondition: productInfo.itemCondition });
 
   await setItemInfoToSelect({ shippingPayer: productInfo.shippingPayer });
+  setItemInfoToSelect({ shippingMethod: productInfo.shippingMethod });
   setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
   setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
   setPrice(productInfo.price);
@@ -240,7 +238,7 @@ const setup = async () => {
   if (!itemData) return;
 
   await setToAllItems(itemData);
-  setShippingMethod(itemData.shippingMethod);
+  // setShippingMethod(itemData.shippingMethod);
   ChromeStorage.deleteItemData();
   await ChromeStorage.setIsLoading(false);
 };

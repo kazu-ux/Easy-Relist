@@ -68,6 +68,13 @@ function getCategories() {
   return categoryValues;
 }
 
+const getPrice = () => {
+  const priceElement = document.querySelector('[data-testid="price"]');
+  const priceText = priceElement?.textContent;
+  const price = Number(priceText?.replace(/[^0-9]/g, ''));
+  return price;
+};
+
 async function setProduct() {
   const product: ItemData = {
     images: await getBase64(getImageUrl()),
@@ -78,10 +85,7 @@ async function setProduct() {
       document.querySelector('[data-testid="ブランド"]')?.textContent ?? '',
     itemCondition:
       document.querySelector('[data-testid="商品の状態"]')?.textContent ?? '',
-    name:
-      document
-        .querySelector('[data-testid="name"]')
-        ?.getAttribute('title-label') ?? '',
+    name: document.title.replace(' - メルカリ', '') ?? '',
     description:
       document.querySelector('[data-testid="description"]')?.textContent ?? '',
     shippingPayer:
@@ -93,38 +97,32 @@ async function setProduct() {
     shippingDuration:
       document.querySelector('[data-testid="発送までの日数"]')?.textContent ??
       '',
-    price:
-      document.querySelector('[data-testid="price"]')?.getAttribute('value') ??
-      '',
+    price: getPrice().toString(),
   };
   return product;
 }
 
-(function () {
-  let count = 0;
-  const interval = setInterval(async () => {
-    count += 1;
-    //一秒ごとにログを表示する
-    if (count % 10 === 0) {
-      console.log('sold繰り返し');
-    }
+(async function () {
+  function waitForElementsToDisplay(selector: string): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const interval = setInterval(() => {
+        console.log('loop');
 
-    const element = document.querySelector(
-      '[data-testid="view-transaction-button"]'
-    );
-    if (element) {
-      count = 0;
-      clearInterval(interval);
-      const isLoading = await ChromeStorage.getIsLoading();
-      if (!isLoading) return;
-      const itemData = await setProduct();
+        const elements = document.querySelectorAll(selector);
+        if (elements.length > 0) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 1000);
+    });
+  }
+  await waitForElementsToDisplay('#item-info');
 
-      await ChromeStorage.setItemData(itemData);
-      console.log(await ChromeStorage.getItemData());
-      window.location.href = 'https://jp.mercari.com/sell/create';
-    } else if (count === 50) {
-      count = 0;
-      clearInterval(interval);
-    }
-  }, 100);
+  const isLoading = await ChromeStorage.getIsLoading();
+  if (!isLoading) return;
+  const itemData = await setProduct();
+
+  await ChromeStorage.setItemData(itemData);
+  console.log(await ChromeStorage.getItemData());
+  window.location.href = 'https://jp.mercari.com/sell/create';
 })();
