@@ -14,58 +14,50 @@ function getImageUrl(): string[] {
   return imageUrls;
 }
 
-async function getBase64(imageUrls: string[]) {
+// 画像のURLからbase64形式の文字列を取得する関数
+const getBase64FromImageUrls = async (
+  imageUrls: string[]
+): Promise<string[]> => {
+  // blobオブジェクトからbase64形式の文字列を取得する関数
+  const blobToBase64 = async (blob: Blob): Promise<string | null> =>
+    new Promise((resolve, reject) => {
+      // FileReaderオブジェクトを作成する
+      const reader = new FileReader();
+      // 読み込みが完了したら結果を返す
+      reader.onload = () => resolve(reader.result as string);
+      // エラーが発生したらエラーを返す
+      reader.onerror = () => reject(reader.error);
+      // base64形式で読み込む
+      reader.readAsDataURL(blob);
+    });
+  // 結果を格納する配列
   const imageBase64s: string[] = [];
+  // URLごとに処理する
   for (const imageUrl of imageUrls) {
-    const base64 = await fetch(imageUrl)
-      .then((e) => e.blob())
-      .then(async (blob) => {
-        const reader = new FileReader();
-        await new Promise((resolve, reject) => {
-          reader.onload = resolve;
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-        return reader.result;
-      });
+    // URLからblobオブジェクトを取得する
+    const blob = await fetch(imageUrl).then((response) => response.blob());
+    // blobオブジェクトからbase64形式の文字列を取得する
+    const base64 = await blobToBase64(blob);
+    // エラーがあればアラートを出す
     if (!base64) {
       alert('画像のbase64取得にエラーが発生しました');
       return [''];
     }
+    // 結果に追加する
     imageBase64s.push(base64.toString());
   }
+  // 結果を返す
   return imageBase64s;
-}
+};
 
-function getCategories() {
-  const categoryTitleElement = document
-    .evaluate('//span[@slot="title"][contains(text(),"カテゴリー")]', document)
-    .iterateNext();
-  if (!categoryTitleElement) {
-    alert('カテゴリータイトルが見つかりません');
-    return [];
-  }
-
-  const categoryElement = <HTMLElement | null>categoryTitleElement.nextSibling;
-  if (!categoryElement) {
-    alert('カテゴリー要素が見つかりません');
-    return [];
-  }
-
-  const categoryLinks = categoryElement.querySelectorAll('a');
-  const categoryValues = Array.from(categoryLinks)
-    .map((element) => {
-      const categoryValueReg = element.href.match(/[0-9]{1,}$/g);
-      if (!categoryValueReg) {
-        alert('カテゴリーIDが正規表現で見つかりません');
-        return '';
-      }
-      const categoryValue = categoryValueReg.toString();
-      return categoryValue;
-    })
-    .filter(Boolean);
-
-  return categoryValues;
+function getCategories(): string[] {
+  const categoryElements = document.querySelectorAll(
+    '[data-testid="item-detail-category"] a'
+  );
+  const categoryNames = Array.from(categoryElements).map(
+    (categoryElement) => categoryElement.textContent ?? ''
+  );
+  return categoryNames;
 }
 
 const getPrice = () => {
@@ -75,9 +67,30 @@ const getPrice = () => {
   return price;
 };
 
+// サイトのタイトルを取得する関数
+function getSiteTitle(): Promise<string> {
+  // Promiseオブジェクトを返す
+  return new Promise((resolve, reject) => {
+    // タイトルが空でないかチェックする関数
+    function checkTitle() {
+      // タイトルを取得する
+      const title = document.title;
+      // タイトルが空でなければ、resolveで値を返す
+      if (title.length > 0) {
+        resolve(title);
+      } else {
+        // タイトルが空なら、0.5秒後に再度チェックする
+        setTimeout(checkTitle, 500);
+      }
+    }
+    // 最初のチェックを実行する
+    checkTitle();
+  });
+}
+
 async function setProduct() {
   const product: ItemData = {
-    images: await getBase64(getImageUrl()),
+    images: await getBase64FromImageUrls(getImageUrl()),
     category: getCategories(),
     size:
       document.querySelector('[data-testid="商品のサイズ"]')?.textContent ?? '',
@@ -85,7 +98,7 @@ async function setProduct() {
       document.querySelector('[data-testid="ブランド"]')?.textContent ?? '',
     itemCondition:
       document.querySelector('[data-testid="商品の状態"]')?.textContent ?? '',
-    name: document.title.replace(' - メルカリ', '') ?? '',
+    name: (await getSiteTitle()).replace(' - メルカリ', ''),
     description:
       document.querySelector('[data-testid="description"]')?.textContent ?? '',
     shippingPayer:
