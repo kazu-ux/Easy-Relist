@@ -67,27 +67,6 @@ const getPrice = () => {
   return price;
 };
 
-// サイトのタイトルを取得する関数
-function getSiteTitle(): Promise<string> {
-  // Promiseオブジェクトを返す
-  return new Promise((resolve, reject) => {
-    // タイトルが空でないかチェックする関数
-    function checkTitle() {
-      // タイトルを取得する
-      const title = document.title;
-      // タイトルが空でなければ、resolveで値を返す
-      if (title.length > 0) {
-        resolve(title);
-      } else {
-        // タイトルが空なら、0.5秒後に再度チェックする
-        setTimeout(checkTitle, 500);
-      }
-    }
-    // 最初のチェックを実行する
-    checkTitle();
-  });
-}
-
 async function setProduct() {
   const product: ItemData = {
     images: await getBase64FromImageUrls(getImageUrl()),
@@ -98,7 +77,7 @@ async function setProduct() {
       document.querySelector('[data-testid="ブランド"]')?.textContent ?? '',
     itemCondition:
       document.querySelector('[data-testid="商品の状態"]')?.textContent ?? '',
-    name: (await getSiteTitle()).replace(' - メルカリ', ''),
+    name: document.title.replace(' - メルカリ', ''),
     description:
       document.querySelector('[data-testid="description"]')?.textContent ?? '',
     shippingPayer:
@@ -115,27 +94,37 @@ async function setProduct() {
   return product;
 }
 
-(async function () {
-  function waitForElementsToDisplay(selector: string): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const interval = setInterval(() => {
-        console.log('loop');
-
-        const elements = document.querySelectorAll(selector);
-        if (elements.length > 0) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 1000);
-    });
+(async () => {
+  // debounce関数の定義
+  function debounce(func: () => void, wait: number) {
+    let timeout: number | undefined;
+    return () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(func, wait);
+    };
   }
-  await waitForElementsToDisplay('#item-info');
 
-  const isLoading = await ChromeStorage.getIsLoading();
-  if (!isLoading) return;
-  const itemData = await setProduct();
+  // MutationObserverのインスタンス作成
+  const observer = new MutationObserver(
+    debounce(async () => {
+      // DOM変更が検出されたときの処理
+      console.log('Debounced');
+      const isLoading = await ChromeStorage.getIsLoading();
+      if (!isLoading) return;
+      const itemData = await setProduct();
 
-  await ChromeStorage.setItemData(itemData);
-  console.log(await ChromeStorage.getItemData());
-  window.location.href = 'https://jp.mercari.com/sell/create';
+      await ChromeStorage.setItemData(itemData);
+      console.log(await ChromeStorage.getItemData());
+      window.location.href = 'https://jp.mercari.com/sell/create';
+    }, 1000)
+  );
+
+  // 監視対象の要素を取得
+  const target = document.querySelector('body')!;
+
+  // 監視オプションを設定
+  const config = { childList: true, subtree: true, attributes: true };
+
+  // 監視開始
+  observer.observe(target, config);
 })();
