@@ -20,7 +20,7 @@ chrome.action.onClicked.addListener(async () => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
-  console.log(tabId, changeinfo, tab);
+  // console.log(tabId, changeinfo, tab);
 });
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
