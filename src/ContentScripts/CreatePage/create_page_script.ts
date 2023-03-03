@@ -55,7 +55,9 @@ const setCategory = (strings: string[]) => {
   clickLink();
 };
 
-function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
+const setItemInfoToSelect = async (itemObjForSelect: {
+  [key: string]: string;
+}) => {
   const key = Object.keys(itemObjForSelect)[0];
   const value = itemObjForSelect[key];
   const targetElement: HTMLSelectElement | null = document.querySelector(
@@ -63,29 +65,14 @@ function setItemInfoToSelect(itemObjForSelect: { [key: string]: string }) {
   );
   if (!targetElement) return;
 
-  return new Promise<void>((resolve, reject) => {
-    function getselectOptions(): string[] {
-      const selectOptions = [];
-      if (!targetElement) {
-        return [''];
-      }
-
-      for (const options of targetElement.options) {
-        selectOptions.push(options.text);
-      }
-      console.log(selectOptions);
-      return selectOptions;
-    }
-
-    function judgeWhatNumber(selectOptions: string[], selectOprion: string) {
-      return selectOptions.findIndex((target) => target === selectOprion);
-    }
-
-    targetElement.selectedIndex = judgeWhatNumber(getselectOptions(), value);
-    targetElement.dispatchEvent(new Event('change', { bubbles: true }));
-    resolve();
-  });
-}
+  const selectOptions = Array.from(targetElement.options).map(
+    (option) => option.text
+  );
+  targetElement.selectedIndex = selectOptions.findIndex(
+    (option) => option === value
+  );
+  targetElement.dispatchEvent(new Event('change', { bubbles: true }));
+};
 
 const setItemName = async (itemText: { [key: string]: string }) => {
   const [key, value] = Object.entries(itemText)[0];
@@ -139,32 +126,7 @@ async function setToAllItems(productInfo: ItemData) {
   return;
 }
 
-const waitForElement = (selector: string) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log('timeout');
-
-      reject(new Error('timeout'));
-    }, 5000);
-    if (document.querySelectorAll(selector)[0]) {
-      return resolve(document.querySelectorAll(selector));
-    }
-
-    const observer = new MutationObserver((mutations) => {
-      if (document.querySelectorAll(selector)[0]) {
-        resolve(document.querySelectorAll(selector));
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-  });
-};
-
-const setShippingMethod = async (shippingMethod: string) => {
+/* const setShippingMethod = async (shippingMethod: string) => {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
   // 発送方法選択ページに遷移
@@ -196,10 +158,36 @@ const setShippingMethod = async (shippingMethod: string) => {
     if (!button) return;
     button.click();
   });
+}; */
+
+const debounceAndObserve = async () => {
+  const debounce = (func: () => void, wait: number) => {
+    let timeout: number | undefined;
+    return () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(func, wait);
+    };
+  };
+
+  const observer = new MutationObserver(
+    debounce(async () => {
+      console.log('Debounced');
+      observer.disconnect();
+    }, 1000)
+  );
+
+  // 監視対象の要素を取得
+  const target = document.querySelector('body')!;
+
+  // 監視オプションを設定
+  const config = { childList: true, subtree: true, attributes: true };
+
+  // 監視開始
+  observer.observe(target, config);
 };
 
 const setup = async () => {
-  console.log(await waitForElement('input[type="file"]'));
+  await debounceAndObserve();
   const itemData = await ChromeStorage.getItemData();
   if (!itemData) return;
 
