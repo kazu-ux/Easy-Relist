@@ -1,6 +1,6 @@
 type ItemData = {
   images: string[];
-  category: string[];
+  categories: string[];
   size: string;
   brand: string;
   itemCondition: string;
