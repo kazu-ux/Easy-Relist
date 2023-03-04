@@ -80,8 +80,9 @@ const setPrice = async (price: string) => {
   targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 };
 
-async function setToAllItems(productInfo: ItemData) {
-  // await imageUpload(productInfo.images);
+const setToAllItems = async (productInfo: ItemData) => {
+  await imageUpload(productInfo.images);
+  await debounceAndObserve();
 
   if (productInfo.size) {
     setItemInfoToSelect({ size: productInfo.size });
@@ -95,35 +96,27 @@ async function setToAllItems(productInfo: ItemData) {
   await setItemName({ name: productInfo.name });
   await setItemDescription(productInfo.description);
   await setItemInfoToSelect({ itemCondition: productInfo.itemCondition });
-
   await setPrice(productInfo.price);
   await setItemInfoToSelect({ shippingPayer: productInfo.shippingPayer });
-
   await setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
   await setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
   return;
-}
+};
 
 const wait = (seconds: number) =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
 const debounceAndObserve = () => {
   return new Promise((resolve) => {
-    const debounce = (func: () => void, wait: number) => {
-      let timeout: number | undefined;
-      return () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(func, wait);
-      };
-    };
-
-    const observer = new MutationObserver(
-      debounce(() => {
+    let timeout: number | undefined;
+    const observer = new MutationObserver(() => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
         console.log('Debounced');
         observer.disconnect();
         resolve('Done');
-      }, 1000)
-    );
+      }, 1000);
+    });
 
     // 監視対象の要素を取得
     const target = document.querySelector('body')!;
@@ -136,43 +129,32 @@ const debounceAndObserve = () => {
   });
 };
 
+const clickElementsByKeywords = async (keyWords: string[]): Promise<void> => {
+  for (const keyWord of keyWords) {
+    const elements = [...document.querySelectorAll<HTMLElement>('*')];
+
+    const element = elements.find((element) => element.innerText === keyWord);
+    console.log(element);
+    const child = element?.firstChild as HTMLElement | null;
+
+    if (!child) return;
+    child.click();
+    await wait(0.5);
+  }
+};
+
 const setCategories = async (keyWords: string[]) => {
   keyWords.unshift('カテゴリーを選択する');
 
-  const clickElementsByKeywords = async (): Promise<void> => {
-    for (const keyWord of keyWords) {
-      const elements = [...document.querySelectorAll<HTMLElement>('*')];
-
-      const element = elements.find((element) => element.innerText === keyWord);
-      console.log(element);
-      const child = element?.firstChild as HTMLElement | null;
-
-      if (!child) return;
-      child.click();
-      await wait(0.5);
-    }
-  };
-  await clickElementsByKeywords();
+  await clickElementsByKeywords(keyWords);
 };
 
 const setShippingMethod = async (shippingMethod: string) => {
   console.log(shippingMethod);
 
   const keyWords = ['配送の方法を選択する', shippingMethod, '更新する'];
-  const clickElementsByKeywords = async (): Promise<void> => {
-    for (const keyWord of keyWords) {
-      const elements = [...document.querySelectorAll<HTMLElement>('*')];
 
-      const element = elements.find((element) => element.innerText === keyWord);
-      console.log(element);
-      const child = element?.firstChild as HTMLElement | null;
-
-      if (!child) return;
-      child.click();
-      await wait(0.5);
-    }
-  };
-  await clickElementsByKeywords();
+  await clickElementsByKeywords(keyWords);
 };
 
 const setup = async () => {
@@ -183,7 +165,7 @@ const setup = async () => {
   if (!itemData) return;
 
   await setToAllItems(itemData);
-  await wait(1);
+  await debounceAndObserve();
 
   await setShippingMethod(itemData.shippingMethod);
   console.log('配送方法入力完了');
