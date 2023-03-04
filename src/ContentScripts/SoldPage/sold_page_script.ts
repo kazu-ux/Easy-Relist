@@ -70,7 +70,7 @@ const getPrice = () => {
 async function setProduct() {
   const product: ItemData = {
     images: await getBase64FromImageUrls(getImageUrl()),
-    category: getCategories(),
+    categories: getCategories(),
     size:
       document.querySelector('[data-testid="商品のサイズ"]')?.textContent ?? '',
     brand:
