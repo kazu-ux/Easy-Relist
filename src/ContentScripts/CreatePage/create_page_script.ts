@@ -33,28 +33,6 @@ function setBrand(brand: string) {
   targetElement.setAttribute('value', brand);
 }
 
-const setCategory = (strings: string[]) => {
-  strings.unshift('カテゴリーを選択する');
-
-  let i = 0;
-  const links = document.getElementsByTagName('a');
-
-  const clickLink = () => {
-    if (i < links.length) {
-      const link = links[i];
-      if (strings.includes(link.textContent ?? '')) {
-        link.click();
-        setTimeout(clickLink, 1000);
-      } else {
-        i++;
-        setTimeout(clickLink, 1000);
-      }
-    }
-  };
-
-  clickLink();
-};
-
 const setItemInfoToSelect = async (itemObjForSelect: {
   [key: string]: string;
 }) => {
@@ -103,8 +81,8 @@ const setPrice = async (price: string) => {
 };
 
 async function setToAllItems(productInfo: ItemData) {
-  await imageUpload(productInfo.images);
-  // await setAllCategory(productInfo.category);
+  // await imageUpload(productInfo.images);
+
   if (productInfo.size) {
     setItemInfoToSelect({ size: productInfo.size });
   }
@@ -120,80 +98,99 @@ async function setToAllItems(productInfo: ItemData) {
 
   await setPrice(productInfo.price);
   await setItemInfoToSelect({ shippingPayer: productInfo.shippingPayer });
-  // setItemInfoToSelect({ shippingMethod: productInfo.shippingMethod });
+
   await setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
   await setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
   return;
 }
 
-/* const setShippingMethod = async (shippingMethod: string) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+const wait = (seconds: number) =>
+  new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
-  // 発送方法選択ページに遷移
-  const shippingMethodsPageTransitionLink = (await waitForElement(
-    'a[href="/sell/shipping_methods"]'
-  )) as HTMLLinkElement[];
-
-  if (!shippingMethodsPageTransitionLink) return;
-
-  shippingMethodsPageTransitionLink[0].click();
-
-  // 発送方法を選択
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  const shippingMethods = (await waitForElement(
-    'input[name="selectedShippingMethod"]'
-  )) as HTMLInputElement[];
-
-  shippingMethods.forEach(async (element) => {
-    if (!(element.getAttribute('aria-label') === shippingMethod)) return;
-    element.click();
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 「更新する」ボタンをクリック
-    const xpath = "//button[contains(text(), '更新する')]";
-    const resultType = XPathResult.FIRST_ORDERED_NODE_TYPE;
-    const button = document.evaluate(xpath, document, null, resultType, null)
-      .singleNodeValue as HTMLButtonElement | null;
-    if (!button) return;
-    button.click();
-  });
-}; */
-
-const debounceAndObserve = async () => {
-  const debounce = (func: () => void, wait: number) => {
-    let timeout: number | undefined;
-    return () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(func, wait);
+const debounceAndObserve = () => {
+  return new Promise((resolve) => {
+    const debounce = (func: () => void, wait: number) => {
+      let timeout: number | undefined;
+      return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(func, wait);
+      };
     };
+
+    const observer = new MutationObserver(
+      debounce(() => {
+        console.log('Debounced');
+        observer.disconnect();
+        resolve('Done');
+      }, 1000)
+    );
+
+    // 監視対象の要素を取得
+    const target = document.querySelector('body')!;
+
+    // 監視オプションを設定
+    const config = { childList: true, subtree: true, attributes: true };
+
+    // 監視開始
+    observer.observe(target, config);
+  });
+};
+
+const setCategories = async (keyWords: string[]) => {
+  keyWords.unshift('カテゴリーを選択する');
+
+  const clickElementsByKeywords = async (): Promise<void> => {
+    for (const keyWord of keyWords) {
+      const elements = [...document.querySelectorAll<HTMLElement>('*')];
+
+      const element = elements.find((element) => element.innerText === keyWord);
+      console.log(element);
+      const child = element?.firstChild as HTMLElement | null;
+
+      if (!child) return;
+      child.click();
+      await wait(0.5);
+    }
   };
+  await clickElementsByKeywords();
+};
 
-  const observer = new MutationObserver(
-    debounce(async () => {
-      console.log('Debounced');
-      observer.disconnect();
-    }, 1000)
-  );
+const setShippingMethod = async (shippingMethod: string) => {
+  console.log(shippingMethod);
 
-  // 監視対象の要素を取得
-  const target = document.querySelector('body')!;
+  const keyWords = ['配送の方法を選択する', shippingMethod, '更新する'];
+  const clickElementsByKeywords = async (): Promise<void> => {
+    for (const keyWord of keyWords) {
+      const elements = [...document.querySelectorAll<HTMLElement>('*')];
 
-  // 監視オプションを設定
-  const config = { childList: true, subtree: true, attributes: true };
+      const element = elements.find((element) => element.innerText === keyWord);
+      console.log(element);
+      const child = element?.firstChild as HTMLElement | null;
 
-  // 監視開始
-  observer.observe(target, config);
+      if (!child) return;
+      child.click();
+      await wait(0.5);
+    }
+  };
+  await clickElementsByKeywords();
 };
 
 const setup = async () => {
+  const isLoading = await ChromeStorage.getIsLoading();
+  if (!isLoading) return;
   await debounceAndObserve();
   const itemData = await ChromeStorage.getItemData();
   if (!itemData) return;
 
   await setToAllItems(itemData);
-  setCategory;
-  // setShippingMethod(itemData.shippingMethod);
+  await wait(1);
+
+  await setShippingMethod(itemData.shippingMethod);
+  console.log('配送方法入力完了');
+
+  await setCategories(itemData.categories);
+  console.log('カテゴリー名入力完了');
+
   // ChromeStorage.deleteItemData();
   await ChromeStorage.setIsLoading(false);
 };
