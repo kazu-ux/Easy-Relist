@@ -1,4 +1,7 @@
-(function () {
+import ChromeStorage from '../../Storage/chrome_storage';
+import './css/style.css';
+
+const TransactionPage = () => {
   let count = 0;
   const interval = setInterval(async () => {
     count += 1;
@@ -21,7 +24,6 @@
       count = 0;
       clearInterval(interval);
       await createRelistButton(element);
-      await clickEvent();
     } else if (count === 50) {
       console.log('ターゲット要素が見つかりませんでした');
       count = 0;
@@ -29,16 +31,20 @@
     }
   }, 100);
 
-  async function createRelistButton(element: Element): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      const divElement = document.createElement('div');
-      divElement.className = 'relist-button';
-      divElement.textContent = '再出品する！';
+  async function createRelistButton(element: Element) {
+    const onClick = async () => {
+      await ChromeStorage.setIsLoading(true);
+      window.open(getItemUrl());
+    };
 
-      element.appendChild(divElement);
+    const divElement = document.createElement('div');
+    divElement.className = 'relist-button';
+    divElement.textContent = '再出品する！';
+    divElement.onclick = onClick;
 
-      resolve();
-    });
+    element.appendChild(divElement);
+
+    return divElement;
   }
   function getItemUrl() {
     const targetElement: HTMLLinkElement | null = document.querySelector(
@@ -46,19 +52,11 @@
     );
     if (!targetElement) {
       alert('商品ページのURL要素が見つかりませんでした');
-      return;
+      return '';
     }
     const targetUrl = targetElement.href;
     return targetUrl;
   }
+};
 
-  async function clickEvent() {
-    const relistButtonElement = document.querySelector('div.relist-button');
-    relistButtonElement!.addEventListener('click', async () => {
-      chrome.runtime.sendMessage({
-        sender: 'tradingPage',
-        url: getItemUrl(),
-      });
-    });
-  }
-})();
+export default TransactionPage;
