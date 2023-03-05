@@ -3,60 +3,69 @@ import './css/style.css';
 
 const TransactionPage = () => {
   let count = 0;
-  const interval = setInterval(async () => {
-    count += 1;
-    //一秒ごとにログを表示する
+
+  const checkForElement = async () => {
+    const element = document.querySelector(
+      '[data-testid="transaction:information-for-seller"] mer-list'
+    );
+    const relistButtonElement = document.querySelector('div.relist-button');
+
+    count++;
+
+    // 10秒ごとにログを出力する
     if (count % 10 === 0) {
       console.log('trading繰り返し');
     }
 
-    const element = document.querySelector(
-      '[data-testid="transaction:information-for-seller"] mer-list'
-    );
-
-    const relistButtonElement = document.querySelector('div.relist-button');
     if (relistButtonElement) {
-      count = 0;
       clearInterval(interval);
+      console.log('再出品ボタンが見つかりました。インターバルを停止します。');
       return;
     }
-    if (element) {
-      count = 0;
-      clearInterval(interval);
-      await createRelistButton(element);
-    } else if (count === 50) {
-      console.log('ターゲット要素が見つかりませんでした');
-      count = 0;
-      clearInterval(interval);
-    }
-  }, 100);
 
-  async function createRelistButton(element: Element) {
+    if (element) {
+      clearInterval(interval);
+      console.log('ターゲット要素が見つかりました。再出品ボタンを作成します。');
+      createRelistButton(element);
+      return;
+    }
+
+    if (count === 50) {
+      clearInterval(interval);
+      console.log('ターゲット要素が50回の試行で見つかりませんでした。');
+      return;
+    }
+  };
+
+  const interval = setInterval(checkForElement, 100);
+
+  const createRelistButton = (element: Element) => {
     const onClick = async () => {
+      const itemUrl = getItemUrl();
       await ChromeStorage.setIsLoading(true);
-      window.open(getItemUrl());
+      window.open(itemUrl);
     };
 
     const divElement = document.createElement('div');
     divElement.className = 'relist-button';
     divElement.textContent = '再出品する！';
-    divElement.onclick = onClick;
+    divElement.addEventListener('click', onClick);
 
     element.appendChild(divElement);
 
     return divElement;
-  }
-  function getItemUrl() {
-    const targetElement: HTMLLinkElement | null = document.querySelector(
+  };
+  const getItemUrl = (): string => {
+    const targetElement = document.querySelector<HTMLLinkElement>(
       '[data-testid="transaction:information-for-seller"] a'
     );
+
     if (!targetElement) {
-      alert('商品ページのURL要素が見つかりませんでした');
-      return '';
+      throw new Error('商品ページのURL要素が見つかりませんでした');
     }
-    const targetUrl = targetElement.href;
-    return targetUrl;
-  }
+
+    return targetElement.href;
+  };
 };
 
 export default TransactionPage;
