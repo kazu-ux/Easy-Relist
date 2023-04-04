@@ -1,18 +1,28 @@
 import ChromeStorage from '../../Storage/chrome_storage';
 
-function getImageUrl(): string[] {
-  const imageUrls: string[] = [];
-  const imageElements = document.querySelectorAll('.slick-list [sticker]');
-  for (const element of imageElements) {
-    const imageUrl = element.getAttribute('src');
-    if (!imageUrl) {
-      alert('画像のURL取得に失敗しました');
-      return [''];
-    }
-    imageUrls.push(imageUrl);
-  }
+const getItemId = () => {
+  const url = window.location.href;
+  const itemId = url.split('/')[4];
+  return itemId;
+};
+
+const searchElement = (keyWord: string) => {
+  const bodyElement = document.querySelector('body')!.innerHTML;
+  return bodyElement.includes(keyWord);
+};
+
+const getImageUrl = (): string[] => {
+  const itemId = getItemId();
+  const baseImageURL = 'https://static.mercdn.net/item/detail/orig/photos/';
+  const numbers = [...Array(10)].map((_, index) => index + 1);
+
+  const imageUrls = numbers.flatMap((number) => {
+    const imageUrl = baseImageURL + itemId + '_' + number + '.jpg';
+    if (!searchElement(imageUrl)) return [];
+    return imageUrl;
+  });
   return imageUrls;
-}
+};
 
 // 画像のURLからbase64形式の文字列を取得する関数
 const getBase64FromImageUrls = async (
@@ -111,6 +121,11 @@ async function setProduct() {
       console.log('Debounced');
       const isLoading = await ChromeStorage.getIsLoading();
       if (!isLoading) return;
+      console.log({ isLoading });
+
+      const imageUrls = getImageUrl();
+      if (!imageUrls.length) return alert('画像が空です');
+
       const itemData = await setProduct();
 
       await ChromeStorage.setItemData(itemData);
