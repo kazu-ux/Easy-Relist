@@ -1,3 +1,11 @@
+const setItemId = (itemId: string) => {
+  return chrome.storage.local.set({ itemId });
+};
+
+const getItemId = async (): Promise<string | undefined> => {
+  return (await chrome.storage.local.get('itemId')).itemId;
+};
+
 const setItemData = (itemData: ItemData) => {
   return chrome.storage.local.set({ itemData });
 };
@@ -10,6 +18,10 @@ const deleteItemData = () => {
   return chrome.storage.local.remove('itemData');
 };
 
+const getHeaders = async (): Promise<[] | undefined> => {
+  return (await chrome.storage.local.get('headers')).headers;
+};
+
 const setIsLoading = (isLoading: boolean) => {
   return chrome.storage.local.set({ isLoading });
 };
@@ -19,9 +31,12 @@ const getIsLoading = async (): Promise<boolean | undefined> => {
 };
 
 const ChromeStorage = {
+  setItemId,
+  getItemId,
   setItemData,
   getItemData,
   deleteItemData,
+  getHeaders,
   setIsLoading,
   getIsLoading,
 };
