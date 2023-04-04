@@ -1,7 +1,5 @@
 import ChromeStorage from '../../Storage/chrome_storage';
 
-const intervalTimes = 1000;
-
 const imageUpload = async (images: string[]) => {
   const dataTransfer = new DataTransfer();
   const targetElement: HTMLInputElement | null = document.querySelector(
@@ -80,29 +78,6 @@ const setPrice = async (price: string) => {
   targetElement.dispatchEvent(new Event('input', { bubbles: true }));
 };
 
-const setToAllItems = async (productInfo: ItemData) => {
-  await imageUpload(productInfo.images);
-  await debounceAndObserve();
-
-  if (productInfo.size) {
-    setItemInfoToSelect({ size: productInfo.size });
-  }
-  if (productInfo.brand) {
-    setTimeout(() => {
-      setBrand(productInfo.brand);
-    }, intervalTimes);
-  }
-
-  await setItemName({ name: productInfo.name });
-  await setItemDescription(productInfo.description);
-  await setItemInfoToSelect({ itemCondition: productInfo.itemCondition });
-  await setPrice(productInfo.price);
-  await setItemInfoToSelect({ shippingPayer: productInfo.shippingPayer });
-  await setItemInfoToSelect({ shippingFromArea: productInfo.shippingFromArea });
-  await setItemInfoToSelect({ shippingDuration: productInfo.shippingDuration });
-  return;
-};
-
 const wait = (seconds: number) =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
@@ -160,18 +135,28 @@ const setShippingMethod = async (shippingMethod: string) => {
 const setup = async () => {
   const isLoading = await ChromeStorage.getIsLoading();
   if (!isLoading) return;
-  await debounceAndObserve();
   const itemData = await ChromeStorage.getItemData();
   if (!itemData) return;
-
-  await setToAllItems(itemData);
   await debounceAndObserve();
 
-  await setShippingMethod(itemData.shippingMethod);
+  //各項目にアイテムデータを入力していく
+  await imageUpload(itemData.images);
+  await debounceAndObserve();
+  await setItemName({ name: itemData.name });
+  await setItemDescription(itemData.description);
+  await setItemInfoToSelect({ itemCondition: itemData.itemCondition });
+  await setPrice(itemData.price);
+  await setItemInfoToSelect({ shippingPayer: itemData.shippingPayer });
+  await setItemInfoToSelect({ shippingFromArea: itemData.shippingFromArea });
+  await setItemInfoToSelect({ shippingDuration: itemData.shippingDuration });
+
+  await debounceAndObserve();
+
+  /*   await setShippingMethod(itemData.shippingMethod);
   console.log('配送方法入力完了');
 
   await setCategories(itemData.categories);
-  console.log('カテゴリー名入力完了');
+  console.log('カテゴリー名入力完了'); */
 
   // ChromeStorage.deleteItemData();
   await ChromeStorage.setIsLoading(false);
