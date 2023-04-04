@@ -27,9 +27,7 @@ const manifest = defineManifest({
       js: ['src/ContentScripts/CreatePage/create_page_script.ts'],
     },
   ],
-  background: {
-    service_worker: 'src/Background/background.ts',
-  },
+
   permissions: ['scripting', 'storage', 'webRequest', 'tabs'],
   host_permissions: [
     'https://jp.mercari.com/transaction/*',
